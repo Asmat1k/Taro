@@ -1,0 +1,28 @@
+stages:
+  - validate
+  - build
+
+default:
+  image: node:20
+
+.common:
+  before_script:
+    - npm ci
+
+validate:
+  stage: validate
+  extends: .common
+  script:
+    - npx tsc --noEmit
+    - npm run lint
+
+build:
+  stage: build
+  extends: .common
+  script:
+    - npm run build
+  artifacts:
+    name: "build-$CI_COMMIT_SHORT_SHA"
+    paths:
+      - dist/
+    expire_in: 3 days
