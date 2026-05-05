@@ -1,4 +1,5 @@
 import "reflect-metadata"
+import "antd/dist/reset.css"
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 import { Application, iocContainer, iocAppContainer } from "@app"
