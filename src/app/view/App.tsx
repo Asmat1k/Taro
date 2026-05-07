@@ -9,18 +9,14 @@ import { WithTitle } from "./components/WithTitle"
 
 export const Application = observer(function Application() {
   return (
-    <XProvider
-      theme={{
-        algorithm: theme.defaultAlgorithm,
-      }}
-    >
-      <AppErrorBoundary>
+    <AppErrorBoundary>
+      <XProvider theme={{ algorithm: theme.defaultAlgorithm }}>
         <WithTitle>
-          <Suspense fallback={<Loader/>}>
-            <AppRoutes/>
+          <Suspense fallback={<Loader />}>
+            <AppRoutes />
           </Suspense>
         </WithTitle>
-      </AppErrorBoundary>
-    </XProvider>
+      </XProvider>
+    </AppErrorBoundary>
   )
 })
