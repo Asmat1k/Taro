@@ -1,6 +1,7 @@
 import "./ChatComponent.scss"
 import { useCallback, useEffect, useState } from "react"
 import { observer } from "mobx-react-lite"
+import { useTranslation } from "react-i18next"
 import { Button, Empty, Skeleton } from "antd"
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons"
 import { Conversations, type ConversationsProps } from "@ant-design/x"
@@ -10,6 +11,7 @@ import { chatsStore } from "../store"
 
 export const ChatComponent = observer(function ChatComponent() {
   const chatsService = useIoCBinding<ChatsService>(ChatsService$type)
+  const { t } = useTranslation()
   const [ collapsed, setCollapsed ] = useState(false)
 
   useEffect(() => {
@@ -20,12 +22,15 @@ export const ChatComponent = observer(function ChatComponent() {
     void chatsService.createSession()
   }, [ chatsService ])
 
-  const sessionItems: ConversationsProps["items"] = chatsStore.sessions.map((session) => ({
-    key: session.sessionId,
-    label: collapsed
-      ? toCollapsedLabel(session.title ?? `Сессия ${session.sessionId.slice(0, 8)}`)
-      : (session.title ?? `Сессия ${session.sessionId.slice(0, 8)}`),
-  }))
+  const sessionItems: ConversationsProps["items"] = chatsStore.sessions.map((session) => {
+    const shortId = session.sessionId.slice(0, 8)
+    const displayTitle =
+      session.title ?? t("chat.sessionFallback", { shortId })
+    return {
+      key: session.sessionId,
+      label: collapsed ? toCollapsedLabel(displayTitle) : displayTitle,
+    }
+  })
 
   return (
     <div className="chat-sidebar-page">
@@ -37,14 +42,14 @@ export const ChatComponent = observer(function ChatComponent() {
           icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
           onClick={() => setCollapsed((prev) => !prev)}
         >
-          {!collapsed && "Свернуть"}
+          {!collapsed && t("chat.collapse")}
         </Button>
         <Button
           className="chat-sidebar__new-chat-btn"
           type="primary"
           onClick={onCreate}
         >
-          {collapsed ? "+" : "Новый чат"}
+          {collapsed ? "+" : t("chat.newChat")}
         </Button>
         <div className="chat-sidebar__content">
           {chatsStore.isLoadingSessions ? (
@@ -53,7 +58,7 @@ export const ChatComponent = observer(function ChatComponent() {
             <Empty
               className="chat-sidebar__empty"
               image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description={collapsed ? false : "Сессий пока нет"}
+              description={collapsed ? false : t("chat.noSessions")}
             />
           ) : (
             <Conversations

@@ -1,4 +1,5 @@
 import { injectable } from "inversify"
+import i18n from "@i18n"
 import {
   SessionStatus,
   SessionStage,
@@ -30,13 +31,13 @@ export class SessionTransportImpl implements SessionTransport {
     return Promise.resolve([
       {
         sessionId: "6b239a23-4f1d-4f9e-a18f-4368f2fb9681",
-        title: "Прогноз продаж Q3",
+        title: i18n.t("mock.sessionSalesForecast"),
         stage: SessionStage.prediction,
         status: SessionStatus.done,
       },
       {
         sessionId: "c39e0097-0396-49f1-a146-31c6ae86fd65",
-        title: "Уточнение гипотезы",
+        title: i18n.t("mock.sessionHypothesis"),
         stage: SessionStage.clarification,
         status: SessionStatus.inProgress,
       },
@@ -49,11 +50,11 @@ export class SessionTransportImpl implements SessionTransport {
   }
 
   async createPredictionSession(tone: MessageTone, message: string): Promise<SessionId> {
-    //@typescript-eslint/no-unused-expressions
-    const requestBody = { 
+    // @ts-expect-error TS6133 — тело запроса для будущего вызова API
+    const requestBody = {
       tone,
       message,
     }
-    return Promise.resolve( crypto.randomUUID() )
+    return Promise.resolve(crypto.randomUUID())
   }
 }

@@ -8,6 +8,7 @@ import {
   SessionTransport$type,
   type SessionTransport,
 } from "@common"
+import i18n from "@i18n"
 
 export const ChatsService$type = Symbol("ChatsService")
 
@@ -38,12 +39,16 @@ export class ChatsServiceImpl implements ChatsService {
   }
 
   async createSession(): Promise<void> {
-    const sessionId  = await this.sessionTransport.createPredictionSession(MessageTone.neutral, "Новый чат")
+    const newChatTitle = i18n.t("chat.newChat")
+    const sessionId = await this.sessionTransport.createPredictionSession(
+      MessageTone.neutral,
+      newChatTitle,
+    )
     runInAction(() => {
       this.chatsStore.sessions = [
         {
           sessionId,
-          title: "Новый чат",
+          title: newChatTitle,
           stage: SessionStage.prediction,
           status: SessionStatus.pending,
         },
