@@ -11,6 +11,7 @@
     "build:staging": "tsc -b && vite build --mode staging"
   },
   "dependencies": {
+    "@ant-design/v5-patch-for-react-19": "1.0.3",
     "@ant-design/x": "1.6.1",
     "antd": "5.24.6",
     "i18next": "26.0.10",
@@ -40,7 +41,6 @@
     "sass-embedded": "1.99.0",
     "typescript": "6.0.2",
     "typescript-eslint": "8.58.0",
-    "vite": "8.0.4",
-    "vite-tsconfig-paths": "6.1.1"
+    "vite": "8.0.4"
   }
 }
