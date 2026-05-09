@@ -1,1 +1,1 @@
-export * from "./ChatStore"
+export * from "./ChatsStore"
