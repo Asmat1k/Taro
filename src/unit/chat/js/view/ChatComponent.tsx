@@ -1,46 +1,84 @@
+import "./ChatComponent.scss"
+import { useCallback, useEffect, useState } from "react"
 import { observer } from "mobx-react-lite"
+import { Button, Empty, Skeleton } from "antd"
+import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons"
+import { Conversations, type ConversationsProps } from "@ant-design/x"
+import { type ChatsService, ChatsService$type } from "../service"
 import { useIoCBinding } from "../ioc"
-import { type ChatService, ChatService$type } from "../service"
-import { chatStore } from "../store"
-import { useBlocker, useNavigate } from "react-router-dom"
-import { useEffect } from "react"
-import { Paths } from "@common"
+import { chatsStore } from "../store"
 
 export const ChatComponent = observer(function ChatComponent() {
-  const chatService = useIoCBinding<ChatService>(ChatService$type)
-  const navigation = useNavigate()
-  const blocker = useBlocker(
-    ({ currentLocation, nextLocation }) =>
-      currentLocation.pathname !== nextLocation.pathname
-  )
+  const chatsService = useIoCBinding<ChatsService>(ChatsService$type)
+  const [ collapsed, setCollapsed ] = useState(false)
 
   useEffect(() => {
-    if (blocker.state === "blocked") {
-      if (window.confirm("Are you sure?")) {
-        blocker.proceed()
-      }
-    }
-  }, [ blocker ])
+    void chatsService.loadSessions()
+  }, [ chatsService ])
 
-  const onBack = () => {
-    navigation(Paths.path)
-  }
-  
-  const onIncrement = () => {
-    chatService.increment()
-  }
+  const onCreate = useCallback(() => {
+    chatsService.createSession()
+  }, [ chatsService ])
 
-  const onDecrement = () => {
-    chatService.decrement()
-  }
+  const sessionItems: ConversationsProps["items"] = chatsStore.sessions.map((session) => ({
+    key: session.sessionId,
+    label: collapsed
+      ? toCollapsedLabel(session.title ?? `Сессия ${session.sessionId.slice(0, 8)}`)
+      : (session.title ?? `Сессия ${session.sessionId.slice(0, 8)}`),
+  }))
 
   return (
-    <div>
-      <h1>Chat</h1>
-      <button onClick={onIncrement}>Increment</button>
-      <div>{chatStore.count}</div>
-      <button onClick={onDecrement}>Decrement</button>
-      <button onClick={onBack}>Go back</button>
+    <div className="chat-sidebar-page">
+      <aside
+        className={`chat-sidebar ${collapsed ? "chat-sidebar--collapsed" : ""}`}
+      >
+        <Button
+          className="chat-sidebar__collapse-btn"
+          icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+          onClick={() => setCollapsed((prev) => !prev)}
+        >
+          {!collapsed && "Свернуть"}
+        </Button>
+        <Button
+          className="chat-sidebar__new-chat-btn"
+          type="primary"
+          onClick={onCreate}
+        >
+          {collapsed ? "+" : "Новый чат"}
+        </Button>
+        <div className="chat-sidebar__content">
+          {chatsStore.isLoadingSessions ? (
+            <Skeleton active paragraph={{ rows: 6 }} />
+          ) : sessionItems.length === 0 ? (
+            <Empty
+              className="chat-sidebar__empty"
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description={collapsed ? false : "Сессий пока нет"}
+            />
+          ) : (
+            <Conversations
+              className="p-0"
+              items={sessionItems}
+              activeKey={chatsStore.selectedSessionId}
+              onActiveChange={(value) => chatsService.selectSession(value)}
+            />
+          )}
+        </div>
+      </aside>
     </div>
   )
 })
+
+function toCollapsedLabel(title: string): string {
+  const words = title
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+
+  if (words.length === 0) {
+    return "?"
+  }
+
+  const initials = words.slice(0, 2).map((word) => word[0]?.toUpperCase() ?? "")
+  return initials.join("")
+}
