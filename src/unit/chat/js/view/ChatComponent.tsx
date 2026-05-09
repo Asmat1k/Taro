@@ -17,7 +17,7 @@ export const ChatComponent = observer(function ChatComponent() {
   }, [ chatsService ])
 
   const onCreate = useCallback(() => {
-    chatsService.createSession()
+    void chatsService.createSession()
   }, [ chatsService ])
 
   const sessionItems: ConversationsProps["items"] = chatsStore.sessions.map((session) => ({
