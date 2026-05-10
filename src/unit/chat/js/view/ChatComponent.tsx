@@ -3,7 +3,7 @@ import { useIoCBinding } from "../ioc"
 import { type ChatService, ChatService$type } from "../service"
 import { chatStore } from "../store"
 import { useBlocker, useNavigate } from "react-router-dom"
-import { useEffect } from "react"
+import { useCallback, useEffect } from "react"
 import { Paths } from "@common"
 
 export const ChatComponent = observer(function ChatComponent() {
@@ -22,6 +22,10 @@ export const ChatComponent = observer(function ChatComponent() {
     }
   }, [ blocker ])
 
+  const onGetPost = useCallback(() => {
+    chatService.getPost()
+  }, [ chatService ])
+
   const onBack = () => {
     navigation(Paths.path)
   }
@@ -36,11 +40,17 @@ export const ChatComponent = observer(function ChatComponent() {
 
   return (
     <div>
-      <h1>Chat</h1>
-      <button onClick={onIncrement}>Increment</button>
-      <div>{chatStore.count}</div>
-      <button onClick={onDecrement}>Decrement</button>
-      <button onClick={onBack}>Go back</button>
+      <div>
+        <button onClick={onIncrement}>Increment</button>
+        <div>{chatStore.count}</div>
+        <button onClick={onDecrement}>Decrement</button>
+        <button onClick={onBack}>Go back</button>
+      </div>
+      <div>
+        <div>{chatStore.post?.title}</div>
+        <div>{chatStore.post?.body}</div>
+        <button onClick={onGetPost}>Get post</button>
+      </div>
     </div>
   )
 })
