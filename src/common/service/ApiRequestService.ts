@@ -15,6 +15,7 @@ export class ApiRequestServiceImpl implements ApiRequestService {
     /*
     * TODO
     * Временный костыль - так как не понятно куда будут запросы
+    * Также с BASE_URL - узнать
     */
     // eslint-disable-next-line no-constant-condition
     if (true) {
@@ -33,8 +34,7 @@ export class ApiRequestServiceImpl implements ApiRequestService {
     }
   }
 
-  constructor() {
-  }
+  constructor() {}
 
-  private readonly BASE_URL: string = "/" // TODO - узнать куда будут запросы
+  private readonly BASE_URL: string = "/"
 }
