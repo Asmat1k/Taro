@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify"
 import { runInAction } from "mobx"
 import { CoreTranasport$type, type CoreTranasport } from "@common"
 import { type ChatStore, ChatStore$type } from "../store"
-import { PostSchema, type Post } from "../model"
+import { PostSchema } from "../model"
 
 /*
 * Этот сервис - пример, никакой логики он не несет
