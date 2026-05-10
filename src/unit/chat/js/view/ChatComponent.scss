@@ -2,58 +2,59 @@
   min-height: 100vh;
   padding: 16px;
   background: var(--color-surface-page);
-}
+  .chat-sidebar {
+    --chat-sidebar-collapsed-width: 90px;
+    --sidebar-padding: 12px;
 
-.chat-sidebar {
-  --chat-sidebar-collapsed-width: 90px;
-  --sidebar-padding: 12px;
-
-  width: 280px;
-  height: calc(100vh - 32px);
-  padding: var(--sidebar-padding);
-  background: var(--color-surface-panel);
-  border: 1px solid var(--color-border-default);
-  border-radius: 8px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  gap: var(--sidebar-padding);
-  transition: width 0.2s ease;
-  overflow: hidden;
-}
-
-.chat-sidebar--collapsed {
-  width: var(--chat-sidebar-collapsed-width);
-
-  .chat-sidebar__collapse-btn,
-  .chat-sidebar__new-chat-btn {
-    width: 40px;
-    min-width: 40px;
-    padding: 0;
-    align-self: center;
-  }
-}
-
-.chat-sidebar__collapse-btn {
-  width: 100%;
-  flex-shrink: 0;
-}
-
-.chat-sidebar__new-chat-btn {
-  width: 100%;
-  flex-shrink: 0;
-}
-
-.chat-sidebar__content {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-
-  .chat-sidebar--collapsed & {
+    width: 280px;
+    height: calc(100vh - 32px);
+    padding: var(--sidebar-padding);
+    background: var(--color-surface-panel);
+    border: 1px solid var(--color-border-default);
+    border-radius: 8px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sidebar-padding);
+    transition: width 0.2s ease;
     overflow: hidden;
-  }
-}
 
-.chat-sidebar__empty {
-  margin-top: 8px;
+    &--collapsed {
+      width: var(--chat-sidebar-collapsed-width);
+
+      .chat-sidebar__collapse-btn,
+      .chat-sidebar__new-chat-btn {
+        padding: 0;
+        align-self: center;
+      }
+    }
+
+    &__collapse-btn {
+      width: 100%;
+      flex-shrink: 0;
+    }
+
+    &__new-chat-btn {
+      width: 100%;
+      flex-shrink: 0;
+    }
+
+    &__content {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+
+      .ant-conversations {
+        padding: 0;
+      }
+
+      .chat-sidebar--collapsed & {
+        overflow: hidden;
+      }
+    }
+
+    &__empty {
+      margin-top: 8px;
+    }
+  }
 }
