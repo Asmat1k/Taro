@@ -1,14 +1,16 @@
+import i18n from "@i18n"
 import { inject, injectable } from "inversify"
 import { runInAction } from "mobx"
-import { type ChatsStore, ChatsStore$type } from "../store"
 import {
   MessageTone,
   SessionStatus,
   SessionStage,
   SessionTransport$type,
   type SessionTransport,
+  makeLogger,
+  type SessionId
 } from "@common"
-import i18n from "@i18n"
+import { type ChatsStore, ChatsStore$type } from "../store"
 
 export const ChatsService$type = Symbol("ChatsService")
 
@@ -22,29 +24,40 @@ export interface ChatsService {
 export class ChatsServiceImpl implements ChatsService {
 
   async loadSessions(): Promise<void> {
-    runInAction(() => {
-      this.chatsStore.isLoadingSessions = true
-    })
+    this.log.info("Load sessions")
     try {
+      runInAction(() => {
+        this.chatsStore.isLoadingSessions = true
+      })
       const sessions = await this.sessionTransport.listSessions()
       runInAction(() => {
         this.chatsStore.sessions = sessions
         this.chatsStore.selectedSessionId = sessions[0]?.sessionId
-      })
-    } finally {
-      runInAction(() => {
         this.chatsStore.isLoadingSessions = false
       })
+      this.log.info("Load sessions | done")
+    } catch (error) {
+      this.log.error("Load sessions | failed | error={}", error)
     }
   }
 
   async createSession(): Promise<void> {
-    const newChatTitle = i18n.t("chat.newChat")
-    const sessionId = await this.sessionTransport.createPredictionSession(
-      MessageTone.neutral,
-      newChatTitle,
-    )
-    runInAction(() => {
+    this.log.info("Create session")
+    try {
+      const newChatTitle = i18n.t("chat.newChat")
+      const sessionId = await this.sessionTransport.createPredictionSession(
+        MessageTone.neutral,
+        newChatTitle,
+      )
+      this.updateSessions(sessionId, newChatTitle)
+      this.log.info("Create session | done | sessionId={}", sessionId)
+    } catch (error) {
+      this.log.error("Create session | failed | error={}", error)
+    }
+  }
+
+  private updateSessions(sessionId: SessionId, newChatTitle: string): void {
+     runInAction(() => {
       this.chatsStore.sessions = [
         {
           sessionId,
@@ -69,4 +82,6 @@ export class ChatsServiceImpl implements ChatsService {
     @inject(SessionTransport$type) private sessionTransport: SessionTransport,
   ) {
   }
+
+   private readonly log = makeLogger("chat.chats")
 }
