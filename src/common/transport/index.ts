@@ -1,2 +1,2 @@
-export * from "./CoreTransport"
-export * from "./CoreTransportError"
+export * from "../common/transport/CoreTransport"
+export * from "../common/transport/CoreTransportError"

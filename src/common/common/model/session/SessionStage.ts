@@ -1,4 +1,4 @@
 export enum SessionStage {
-  prediction = "prediction",
-  clarification = "clarification",
+  PREDICTION = "prediction",
+  CLARIFICATION = "clarification",
 }

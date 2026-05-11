@@ -46,7 +46,7 @@ export class ChatsServiceImpl implements ChatsService {
     try {
       const newChatTitle = i18n.t("chat.newChat")
       const sessionId = await this.sessionTransport.createPredictionSession(
-        MessageTone.neutral,
+        MessageTone.NEUTRAL,
         newChatTitle,
       )
       this.updateSessions(sessionId, newChatTitle)
@@ -62,8 +62,8 @@ export class ChatsServiceImpl implements ChatsService {
         {
           sessionId,
           title: newChatTitle,
-          stage: SessionStage.prediction,
-          status: SessionStatus.pending,
+          stage: SessionStage.PREDICTION,
+          status: SessionStatus.PENDING,
         },
         ...this.chatsStore.sessions,
       ]

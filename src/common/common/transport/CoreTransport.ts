@@ -4,16 +4,16 @@ import { type ApiRequest, type ApiStreamRequest, type ApiStreamHandlers } from "
 import { ApiRequestService$type, ApiResponseService$type, type ApiRequestService, type ApiResponseService } from "../service"
 import { CoreTransportNetworkError } from "./CoreTransportError"
 
-export const CoreTranasport$type = Symbol("CoreTranasport")
+export const CoreTransport$type = Symbol("CoreTransport")
 
-export interface CoreTranasport {
+export interface CoreTransport {
   request<TBody, TResponse>(req: ApiRequest<TBody, TResponse>): Promise<TResponse>
 
   stream(req: ApiStreamRequest, handlers: ApiStreamHandlers): AbortController
 }
 
 @injectable()
-export class CoreTranasportImpl implements CoreTranasport {
+export class CoreTransportImpl implements CoreTransport {
   
  async request<TBody, TResponse>(req: ApiRequest<TBody, TResponse>): Promise<TResponse> {
     try {

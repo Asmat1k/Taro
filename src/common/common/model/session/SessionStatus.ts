@@ -1,6 +1,6 @@
 export enum SessionStatus {
-  pending = "pending",
-  inProgress = "in_progress",
-  done = "done",
-  failed = "failed",
+  PENDING = "pending",
+  IN_PROGRESS = "in_progress",
+  DONE = "done",
+  FAILED = "failed",
 }

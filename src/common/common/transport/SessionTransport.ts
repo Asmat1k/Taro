@@ -32,19 +32,19 @@ export class SessionTransportImpl implements SessionTransport {
       {
         sessionId: "6b239a23-4f1d-4f9e-a18f-4368f2fb9681",
         title: i18n.t("mock.sessionSalesForecast"),
-        stage: SessionStage.prediction,
-        status: SessionStatus.done,
+        stage: SessionStage.PREDICTION,
+        status: SessionStatus.DONE,
       },
       {
         sessionId: "c39e0097-0396-49f1-a146-31c6ae86fd65",
         title: i18n.t("mock.sessionHypothesis"),
-        stage: SessionStage.clarification,
-        status: SessionStatus.inProgress,
+        stage: SessionStage.CLARIFICATION,
+        status: SessionStatus.IN_PROGRESS,
       },
       {
         sessionId: "dc91f66e-70be-4aeb-946c-4cb53ca50270",
-        stage: SessionStage.prediction,
-        status: SessionStatus.pending,
+        stage: SessionStage.PREDICTION,
+        status: SessionStatus.PENDING,
       },
     ])
   }

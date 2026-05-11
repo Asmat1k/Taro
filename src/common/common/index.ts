@@ -1,6 +1,10 @@
-export * from "./view"
 export * from "./core"
-export * from "./Path"
 export * from "./model"
-export * from "./ioc-module"
+export * from "./service"
 export * from "./transport"
+export * from "./view"
+
+export * from "./Path"
+
+export * from "./ioc-module"
+export * from "./ioc"
