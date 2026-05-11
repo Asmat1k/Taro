@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { useTranslation } from "react-i18next"
 import { Button, Empty, Skeleton } from "antd"
-import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons"
+import { MenuFoldOutlined, UnorderedListOutlined, MenuUnfoldOutlined } from "@ant-design/icons"
 import { Conversations, type ConversationsProps } from "@ant-design/x"
 import { type ChatsService, ChatsService$type } from "../service"
 import { useIoCBinding } from "../ioc"
@@ -28,7 +28,8 @@ export const ChatComponent = observer(function ChatComponent() {
       session.title ?? t("chat.sessionFallback", { shortId })
     return {
       key: session.sessionId,
-      label: collapsed ? toCollapsedLabel(displayTitle) : displayTitle,
+      label: collapsed ? null : displayTitle,
+      icon: <UnorderedListOutlined />,
     }
   })
 
@@ -73,17 +74,3 @@ export const ChatComponent = observer(function ChatComponent() {
     </div>
   )
 })
-
-function toCollapsedLabel(title: string): string {
-  const words = title
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-
-  if (words.length === 0) {
-    return "?"
-  }
-
-  const initials = words.slice(0, 2).map((word) => word[0]?.toUpperCase() ?? "")
-  return initials.join("")
-}
