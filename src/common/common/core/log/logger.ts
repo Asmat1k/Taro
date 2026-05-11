@@ -1,4 +1,4 @@
-import { LogLevel } from "../model"
+import { LogLevel } from "./LogLevel"
 
 interface Logger {
   trace(message: string, ...args: unknown[]): void

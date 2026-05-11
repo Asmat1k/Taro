@@ -1,7 +1,7 @@
+import "@ant-design/v5-patch-for-react-19"
 import "reflect-metadata"
-import "antd/dist/reset.css"
-import "./common/view/styles/theme.scss" //TODO перенести в единый файл стилей
 import i18n from "@i18n"
+import "./common/styles/index.scss"
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 import { Application, iocContainer, iocAppContainer } from "@app"
