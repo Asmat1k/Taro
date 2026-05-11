@@ -1,8 +1,7 @@
 import { inject, injectable } from "inversify"
 import { runInAction } from "mobx"
-import { CoreTranasport$type, type CoreTranasport } from "@common"
 import { type ChatStore, ChatStore$type } from "../store"
-import { PostSchema } from "../model"
+import { ChatTransport$type, type ChatTransport } from "../transport"
 
 /*
 * Этот сервис - пример, никакой логики он не несет
@@ -23,11 +22,7 @@ export class ChatServiceImpl implements ChatService {
 
   async getPost(): Promise<void> {
     try {
-      const post = await this.transport.request({
-        url: "https://jsonplaceholder.typicode.com/posts/1",
-        method: "GET",
-        responseSchema: PostSchema
-      })
+      const post = await this.chatTransport.getById(1)
       runInAction(() => {
         this.chatStore.post = post
       })
@@ -52,7 +47,7 @@ export class ChatServiceImpl implements ChatService {
 
   constructor(
     @inject(ChatStore$type) private chatStore: ChatStore,
-    @inject(CoreTranasport$type) private transport: CoreTranasport
+    @inject(ChatTransport$type) private chatTransport: ChatTransport
   ) {
   }
 }

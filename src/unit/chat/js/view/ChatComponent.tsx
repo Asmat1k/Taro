@@ -42,13 +42,13 @@ export const ChatComponent = observer(function ChatComponent() {
     <div>
       <div>
         <button onClick={onIncrement}>Increment</button>
-        <div>{chatStore.count}</div>
+        <div>Count: {chatStore.count}</div>
         <button onClick={onDecrement}>Decrement</button>
         <button onClick={onBack}>Go back</button>
       </div>
       <div>
-        <div>{chatStore.post?.title}</div>
-        <div>{chatStore.post?.body}</div>
+        <div>Title: {chatStore.post?.title}</div>
+        <div>Body: {chatStore.post?.body}</div>
         <button onClick={onGetPost}>Get post</button>
       </div>
     </div>
