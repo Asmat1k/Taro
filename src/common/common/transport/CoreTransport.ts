@@ -48,8 +48,11 @@ export class CoreTransportImpl implements CoreTransport {
     const url = this.apiRequestService.buildUrl(req.url)
     const headers = this.apiRequestService.buildHeaders(req.headers)
 
+    this.log.info("[HTTP] stream connect GET {}", req.url)
+    this.log.debug("[HTTP] stream connect GET {} (headers:{})", req.url, req.headers)
+
     const controller = new AbortController()
-    const { apiResponseService } = this
+    const { apiResponseService, log } = this
     
     void fetchEventSource(url, {
       method: "GET",
@@ -60,18 +63,23 @@ export class CoreTransportImpl implements CoreTransport {
         if (!response.ok) {
           await apiResponseService.handleInvalid(response)
         }
+        log.info("[HTTP] stream open GET {} {}", req.url, response.status)
+        log.debug("[HTTP] stream open GET {} {} (headers:{})", req.url, response.status, response.headers)
         handlers.onOpen?.()
       },
  
       onmessage(ev) {
+        log.debug("[HTTP] stream event GET {} (event:{}) (id:{}) (data:{})", req.url, ev.event, ev.id, ev.data)
         handlers.onEvent(ev.event, ev.data, ev.id ?? null)
       },
  
       onclose() {
+        log.info("[HTTP] stream closed GET {}", req.url)
         handlers.onClose?.()
       },
  
       onerror(error) {
+        log.error("[HTTP] stream failed GET {}", req.url, error)
         handlers.onError?.(
           error instanceof Error ? error : new Error(String(error)),
         )
