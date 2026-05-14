@@ -18,6 +18,8 @@ function print(level: LogLevel, scope: string, template: string, ...args: unknow
 
   switch (level) {
     case LogLevel.TRACE:
+      console.trace(`${prefix} ${message}`)
+      break
     case LogLevel.DEBUG:
       if (!isDev) return
       console.debug(`${prefix} ${message}`)
