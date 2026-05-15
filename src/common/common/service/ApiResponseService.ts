@@ -1,7 +1,7 @@
 import type z from "zod"
 import { injectable } from "inversify"
 import { ApiErrorSchema } from "../model"
-import { CoreTransportError, CoreTransportNetworkError } from "../transport/CoreTransportError"
+import { CoreTransportError, CoreTransportNetworkError } from "../model"
 
 export const ApiResponseService$type = Symbol("ApiResponseService")
 

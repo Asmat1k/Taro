@@ -1,9 +1,8 @@
 import { fetchEventSource } from "@microsoft/fetch-event-source"
 import { inject, injectable } from "inversify"
 import { type ApiRequest, type ApiStreamRequest, type ApiStreamHandlers } from "../model"
-import { ApiResponseService$type, type ApiResponseService } from "../service/ApiResponseService"
-import { ApiRequestService$type, type ApiRequestService } from "../service/ApiRequestService"
-import { CoreTransportNetworkError } from "./CoreTransportError"
+import { ApiResponseService$type, type ApiResponseService, ApiRequestService$type, type ApiRequestService } from "../service"
+import { CoreTransportNetworkError } from "../model"
 import { makeLogger } from "../core"
 
 export const CoreTransport$type = Symbol("CoreTransport")
