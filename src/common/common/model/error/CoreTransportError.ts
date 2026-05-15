@@ -1,4 +1,4 @@
-import type { ApiError } from "../model/api/ApiError"
+import type { ApiError } from "../api/ApiError"
 
 export class CoreTransportError extends Error {
   constructor(statusCode: number, payload: ApiError) {
