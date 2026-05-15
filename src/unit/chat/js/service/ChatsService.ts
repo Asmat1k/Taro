@@ -16,7 +16,9 @@ export const ChatsService$type = Symbol("ChatsService")
 
 export interface ChatsService {
   loadSessions(): Promise<void>
+
   createSession(): Promise<void>
+  
   selectSession(sessionId: string): void
 }
 

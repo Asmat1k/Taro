@@ -1,7 +1,8 @@
 import { fetchEventSource } from "@microsoft/fetch-event-source"
 import { inject, injectable } from "inversify"
 import { type ApiRequest, type ApiStreamRequest, type ApiStreamHandlers } from "../model"
-import { ApiRequestService$type, ApiResponseService$type, type ApiRequestService, type ApiResponseService } from "../service"
+import { ApiResponseService$type, type ApiResponseService } from "../service/ApiResponseService"
+import { ApiRequestService$type, type ApiRequestService } from "../service/ApiRequestService"
 import { CoreTransportNetworkError } from "./CoreTransportError"
 import { makeLogger } from "../core"
 
@@ -9,6 +10,7 @@ export const CoreTransport$type = Symbol("CoreTransport")
 
 export interface CoreTransport {
   request<TBody, TResponse>(req: ApiRequest<TBody, TResponse>): Promise<TResponse>
+
   stream(req: ApiStreamRequest, handlers: ApiStreamHandlers): AbortController
 }
 
