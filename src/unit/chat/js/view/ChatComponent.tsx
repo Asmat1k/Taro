@@ -1,56 +1,75 @@
+import "./ChatComponent.scss"
+import { useCallback, useEffect, useState } from "react"
 import { observer } from "mobx-react-lite"
+import { useTranslation } from "react-i18next"
+import { Button, Empty, Skeleton } from "antd"
+import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons"
+import { Conversations } from "@ant-design/x"
+import { type ChatsService, ChatsService$type } from "../service"
 import { useIoCBinding } from "../ioc"
-import { type ChatService, ChatService$type } from "../service"
-import { chatStore } from "../store"
-import { useBlocker, useNavigate } from "react-router-dom"
-import { useCallback, useEffect } from "react"
-import { Paths } from "@common"
+import { chatsStore } from "../store"
+import { useSessionItems } from "../hooks"
 
 export const ChatComponent = observer(function ChatComponent() {
-  const chatService = useIoCBinding<ChatService>(ChatService$type)
-  const navigation = useNavigate()
-  const blocker = useBlocker(
-    ({ currentLocation, nextLocation }) =>
-      currentLocation.pathname !== nextLocation.pathname
-  )
+  const chatsService = useIoCBinding<ChatsService>(ChatsService$type)
+  const { t } = useTranslation()
+  const [ collapsed, setCollapsed ] = useState(false)
+  const sessionItems = useSessionItems(collapsed)
 
   useEffect(() => {
-    if (blocker.state === "blocked") {
-      if (window.confirm("Are you sure?")) {
-        blocker.proceed()
-      }
-    }
-  }, [ blocker ])
+    void chatsService.loadSessions()
+  }, [ chatsService ])
 
-  const onGetPost = useCallback(() => {
-    chatService.getPost()
-  }, [ chatService ])
+  const onCreate = useCallback(() => {
+    void chatsService.createSession()
+  }, [ chatsService ])
 
-  const onBack = () => {
-    navigation(Paths.path)
-  }
-  
-  const onIncrement = () => {
-    chatService.increment()
-  }
+  const onActiveChange = useCallback((value: string) => {
+    chatsService.selectSession(value)
+  }, [ chatsService ])
 
-  const onDecrement = () => {
-    chatService.decrement()
-  }
+  const onSetCollapsed = useCallback(() => {
+    setCollapsed((prev) => !prev)
+  }, [ setCollapsed ])
 
   return (
-    <div>
-      <div>
-        <button onClick={onIncrement}>Increment</button>
-        <div>Count: {chatStore.count}</div>
-        <button onClick={onDecrement}>Decrement</button>
-        <button onClick={onBack}>Go back</button>
-      </div>
-      <div>
-        <div>Title: {chatStore.post?.title}</div>
-        <div>Body: {chatStore.post?.body}</div>
-        <button onClick={onGetPost}>Get post</button>
-      </div>
+    <div className="chat-sidebar-page">
+      <aside
+        className={`chat-sidebar ${collapsed ? "chat-sidebar--collapsed" : ""}`}
+      >
+        <Button
+          className="chat-sidebar__collapse-btn"
+          icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+          onClick={onSetCollapsed}
+        >
+          {!collapsed && t("chat.collapse")}
+        </Button>
+        <Button
+          className="chat-sidebar__new-chat-btn"
+          type="primary"
+          onClick={onCreate}
+        >
+          {collapsed ? "+" : t("chat.newChat")}
+        </Button>
+        <div className="chat-sidebar__content">
+          {chatsStore.isLoadingSessions ? (
+            <Skeleton active paragraph={{ rows: 6 }} />
+          ) : sessionItems?.length === 0 ? (
+            <Empty
+              className="chat-sidebar__empty"
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description={collapsed ? false : t("chat.noSessions")}
+            />
+          ) : (
+            <Conversations
+              className="p-0"
+              items={sessionItems}
+              activeKey={chatsStore.selectedSessionId}
+              onActiveChange={onActiveChange}
+            />
+          )}
+        </div>
+      </aside>
     </div>
   )
 })

@@ -3,26 +3,29 @@ import { inject, injectable } from "inversify"
 import { type ApiRequest, type ApiStreamRequest, type ApiStreamHandlers } from "../model"
 import { ApiRequestService$type, ApiResponseService$type, type ApiRequestService, type ApiResponseService } from "../service"
 import { CoreTransportNetworkError } from "./CoreTransportError"
+import { makeLogger } from "../core"
 
-export const CoreTranasport$type = Symbol("CoreTranasport")
+export const CoreTransport$type = Symbol("CoreTransport")
 
-export interface CoreTranasport {
+export interface CoreTransport {
   request<TBody, TResponse>(req: ApiRequest<TBody, TResponse>): Promise<TResponse>
-
   stream(req: ApiStreamRequest, handlers: ApiStreamHandlers): AbortController
 }
 
 @injectable()
-export class CoreTranasportImpl implements CoreTranasport {
+export class CoreTransportImpl implements CoreTransport {
   
  async request<TBody, TResponse>(req: ApiRequest<TBody, TResponse>): Promise<TResponse> {
     try {
       const url = this.apiRequestService.buildUrl(req.url)
       const headers = this.apiRequestService.buildHeaders(req.headers)
+      const rawRequest = req.body !== undefined ? JSON.stringify(req.body) : undefined
+      this.log.info("[HTTP] request {} {}", req.method, req.url)
+      this.log.debug("[HTTP] request {} {} (headers:{}) (body:{})", req.method, req.url, req.headers, rawRequest)
       const response = await fetch(url, {
         method: req.method,
         headers,
-        body: req.body !== undefined ? JSON.stringify(req.body) : undefined,
+        body: rawRequest,
         signal: req.signal,
       })
       if (!response.ok) {
@@ -32,8 +35,11 @@ export class CoreTranasportImpl implements CoreTranasport {
         return this.apiResponseService.parse(undefined, req.responseSchema)
       }
       const raw = await response.json()
+      this.log.info("[HTTP] response {} {} {}", req.method, req.url, response.status)
+      this.log.debug("[HTTP] response {} {} {} (headers:{}) (body:{})", req.method, req.url, response.status, response.headers, raw)
       return this.apiResponseService.parse(raw, req.responseSchema)
     } catch (cause) {
+      this.log.error("[HTTP] request {} {} | failed", req.method, req.url, cause)
       throw new CoreTransportNetworkError(cause)
     }
   }
@@ -42,8 +48,11 @@ export class CoreTranasportImpl implements CoreTranasport {
     const url = this.apiRequestService.buildUrl(req.url)
     const headers = this.apiRequestService.buildHeaders(req.headers)
 
+    this.log.info("[HTTP] stream connect GET {}", req.url)
+    this.log.debug("[HTTP] stream connect GET {} (headers:{})", req.url, req.headers)
+
     const controller = new AbortController()
-    const { apiResponseService } = this
+    const { apiResponseService, log } = this
     
     void fetchEventSource(url, {
       method: "GET",
@@ -54,18 +63,23 @@ export class CoreTranasportImpl implements CoreTranasport {
         if (!response.ok) {
           await apiResponseService.handleInvalid(response)
         }
+        log.info("[HTTP] stream open GET {} {}", req.url, response.status)
+        log.debug("[HTTP] stream open GET {} {} (headers:{})", req.url, response.status, response.headers)
         handlers.onOpen?.()
       },
  
       onmessage(ev) {
+        log.debug("[HTTP] stream event GET {} (event:{}) (id:{}) (data:{})", req.url, ev.event, ev.id, ev.data)
         handlers.onEvent(ev.event, ev.data, ev.id ?? null)
       },
  
       onclose() {
+        log.info("[HTTP] stream closed GET {}", req.url)
         handlers.onClose?.()
       },
  
       onerror(error) {
+        log.error("[HTTP] stream failed GET {}", req.url, error)
         handlers.onError?.(
           error instanceof Error ? error : new Error(String(error)),
         )
@@ -81,4 +95,6 @@ export class CoreTranasportImpl implements CoreTranasport {
     @inject(ApiResponseService$type) private apiResponseService: ApiResponseService
   ) {
   }
+
+  protected readonly log = makeLogger("taro.api.core")
 }

@@ -1,0 +1,19 @@
+{
+  "app": {
+    "title": "Taro"
+  },
+  "errors": {
+    "rootNotFound": "Корневой элемент не найден",
+    "somethingWentWrong": "Что-то пошло не так"
+  },
+  "chat": {
+    "collapse": "Свернуть",
+    "newChat": "Новый чат",
+    "noSessions": "Сессий пока нет",
+    "sessionFallback": "Сессия {{shortId}}"
+  },
+  "mock": {
+    "sessionSalesForecast": "Прогноз продаж Q3",
+    "sessionHypothesis": "Уточнение гипотезы"
+  }
+}

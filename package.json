@@ -11,14 +11,17 @@
     "build:staging": "tsc -b && vite build --mode staging"
   },
   "dependencies": {
+    "@ant-design/v5-patch-for-react-19": "1.0.3",
     "@ant-design/x": "1.6.1",
     "@microsoft/fetch-event-source": "2.0.1",
     "antd": "5.24.6",
+    "i18next": "26.0.10",
     "inversify": "8.1.0",
     "mobx": "6.15.0",
     "mobx-react-lite": "4.1.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "react-i18next": "17.0.7",
     "react-router-dom": "7.14.1",
     "reflect-metadata": "0.2.2",
     "zod": "4.4.3"
@@ -37,9 +40,9 @@
     "globals": "17.4.0",
     "husky": "9.1.7",
     "lint-staged": "16.4.0",
+    "sass-embedded": "1.99.0",
     "typescript": "6.0.2",
     "typescript-eslint": "8.58.0",
-    "vite": "8.0.4",
-    "vite-tsconfig-paths": "6.1.1"
+    "vite": "8.0.4"
   }
 }
