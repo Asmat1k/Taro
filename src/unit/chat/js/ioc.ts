@@ -8,9 +8,3 @@ iocContainer.load(iocChatContainer)
 export function useIoCBinding<T>(identifier: symbol): T {
   return iocContainer.get<T>(identifier)
 }
-
-if (import.meta.hot) {
-  import.meta.hot.dispose(() => {
-    iocContainer?.unbindAll()
-  })
-}
