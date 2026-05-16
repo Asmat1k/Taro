@@ -16,6 +16,10 @@ export const ChatComponent = observer(function ChatComponent() {
   const [ collapsed, setCollapsed ] = useState(false)
   const sessionItems = useSessionItems(collapsed)
 
+  const isLoading = chatsStore.isLoadingSessions
+  const isEmpty = !isLoading && sessionItems?.length === 0
+  const hasSessions = !isLoading && sessionItems !== undefined && sessionItems.length > 0
+
   useEffect(() => {
     void chatsService.loadSessions()
   }, [ chatsService ])
@@ -34,9 +38,7 @@ export const ChatComponent = observer(function ChatComponent() {
 
   return (
     <div className="chat-sidebar-page">
-      <aside
-        className={`chat-sidebar ${collapsed ? "chat-sidebar--collapsed" : ""}`}
-      >
+      <aside className={`chat-sidebar ${collapsed ? "chat-sidebar--collapsed" : ""}`}>
         <Button
           className="chat-sidebar__collapse-btn"
           icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -52,15 +54,15 @@ export const ChatComponent = observer(function ChatComponent() {
           {collapsed ? "+" : t("chat.newChat")}
         </Button>
         <div className="chat-sidebar__content">
-          {chatsStore.isLoadingSessions ? (
-            <Skeleton active paragraph={{ rows: 6 }} />
-          ) : sessionItems?.length === 0 ? (
+          {isLoading && <Skeleton active paragraph={{ rows: 6 }} />}
+          {isEmpty && (
             <Empty
               className="chat-sidebar__empty"
               image={Empty.PRESENTED_IMAGE_SIMPLE}
               description={collapsed ? false : t("chat.noSessions")}
             />
-          ) : (
+          )}
+          {hasSessions && (
             <Conversations
               className="p-0"
               items={sessionItems}
