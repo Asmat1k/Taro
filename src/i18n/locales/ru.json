@@ -10,10 +10,27 @@
     "collapse": "Свернуть",
     "newChat": "Новый чат",
     "noSessions": "Сессий пока нет",
-    "sessionFallback": "Сессия {{shortId}}"
+    "sessionFallback": "Сессия {{shortId}}",
+    "settings": "Настройки",
+    "settingsModal": {
+      "title": "Настройки профиля",
+      "name": "Имя",
+      "description": "Расскажи о себе",
+      "placeholders": {
+        "name": "Введите имя",
+        "description": "Введите информацию о себе"
+      },
+      "validation": {
+        "nameRequired": "Имя обязательно"
+      }
+    }
   },
   "mock": {
     "sessionSalesForecast": "Прогноз продаж Q3",
     "sessionHypothesis": "Уточнение гипотезы"
+  },
+  "common": {
+    "save": "Сохранить",
+    "cancel": "Отмена"
   }
 }

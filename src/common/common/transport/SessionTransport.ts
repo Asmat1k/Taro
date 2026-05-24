@@ -57,4 +57,8 @@ export class SessionTransportImpl implements SessionTransport {
     }
     return Promise.resolve(crypto.randomUUID())
   }
+
+  constructor(
+    ) {
+    }
 }

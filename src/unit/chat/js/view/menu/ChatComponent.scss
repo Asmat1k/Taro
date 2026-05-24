@@ -51,8 +51,16 @@
       }
     }
 
+    &__settings-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     &__empty {
       margin-top: 8px;
     }
+    
+  
   }
 }

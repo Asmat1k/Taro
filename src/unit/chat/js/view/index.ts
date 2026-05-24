@@ -1,1 +1,1 @@
-export * from "./ChatComponent"
+export * from "./menu/ChatComponent"
