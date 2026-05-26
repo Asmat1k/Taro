@@ -32,6 +32,6 @@ export class UserTransportImpl implements UserTransport {
   }
 
   constructor(
-    ) {
+  ) {
     }
 }

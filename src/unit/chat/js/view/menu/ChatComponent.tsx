@@ -14,6 +14,7 @@ import { useSessionItems } from "../../hooks"
 import { useIoCBinding } from "../../ioc"
 import { chatsStore } from "../../store"
 import { SettingsModalComponent } from "../settings/SettingsModalComponent"
+import { ChatPanelComponent } from "../chat/ChatPanelComponent"
 
 export const ChatComponent = observer(function ChatComponent() {
   const { t } = useTranslation()
@@ -103,6 +104,8 @@ export const ChatComponent = observer(function ChatComponent() {
           </Button>
         </div>
       </aside>
+
+      <ChatPanelComponent />
 
       <SettingsModalComponent
         open={isSettingsOpened}
