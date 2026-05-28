@@ -20,6 +20,11 @@
         "name": "Введите имя",
         "description": "Введите информацию о себе"
       },
+      "cardTheme": {
+        "label": "Тема карт",
+        "pink": "Розовая",
+        "gold": "Золотая"
+      },
       "validation": {
         "nameRequired": "Имя обязательно"
       }

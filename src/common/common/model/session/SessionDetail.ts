@@ -1,7 +1,7 @@
 import { z } from "zod"
-import { SessionStage } from "./SessionStage"
-import { SessionStatus } from "./SessionStatus"
-import { MessageTone } from "../message/MessageTone"
+import { SessionStage, SessionStageSchema } from "./SessionStage"
+import { SessionStatus, SessionStatusSchema } from "./SessionStatus"
+import { MessageTone, MessageToneSchema } from "../message/MessageTone"
 import { SessionTheme, SessionThemeSchema } from "./SessionTheme"
 import { SessionMessageSchema, type SessionMessage } from "../message/SessionMessage"
 
@@ -15,9 +15,9 @@ export interface SessionDetail {
 }
 
 export const SessionDetailSchema: z.ZodType<SessionDetail> = z.object({
-  stage: z.nativeEnum(SessionStage),
-  status: z.nativeEnum(SessionStatus),
-  tone: z.nativeEnum(MessageTone),
+  stage: SessionStageSchema,
+  status: SessionStatusSchema,
+  tone: MessageToneSchema,
   title: z.string().optional(),
   theme: SessionThemeSchema.optional(),
   messages: z.array(SessionMessageSchema),

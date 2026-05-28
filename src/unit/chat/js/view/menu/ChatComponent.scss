@@ -67,3 +67,16 @@
     }
   }
 }
+
+/* ─── Тема: иконки в списке сессий ─────────────────────────────────────────── */
+[data-card-theme="gold"] {
+  .ant-conversations-icon {
+    color: var(--color-text-secondary);
+  }
+}
+
+[data-card-theme="pink"] {
+  .ant-conversations-icon {
+    color: var(--color-text-secondary);
+  }
+}

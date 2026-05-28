@@ -28,3 +28,65 @@
   /* ─── Danger ────────────────────────────────────────────────────────────── */
   --color-danger: #cf1322;
 }
+
+[data-card-theme="pink"] {
+  /* ─── Surfaces ──────────────────────────────────────────────────────────── */
+  --color-surface-page: #fce4f5;
+  --color-surface-panel: #fff0fb;
+  --color-border-default: #f9b8e8;
+
+  /* ─── Text ──────────────────────────────────────────────────────────────── */
+  --color-text-primary: #5a003a;
+  --color-text-secondary: #b05090;
+
+  /* ─── Chat bubbles ──────────────────────────────────────────────────────── */
+  --color-chat-user-bubble: #d4007a;
+  --color-chat-user-text: #ffffff;
+  --color-chat-assistant-bubble: #fff4fc;
+  --color-chat-assistant-text: #5a003a;
+  --color-chat-system-bubble: #ffe8f8;
+  --color-chat-system-text: #a00060;
+
+  /* ─── Tarot cards ───────────────────────────────────────────────────────── */
+  --color-card-border: #f7a8e0;
+  --color-card-hover-border: #d4007a;
+
+  /* ─── Theme badge ───────────────────────────────────────────────────────── */
+  --color-theme-badge-bg: #ffe0f4;
+  --color-theme-badge-text: #b5006e;
+  --color-theme-badge-border: #f5a0dc;
+
+  /* ─── Danger ────────────────────────────────────────────────────────────── */
+  --color-danger: #cf1322;
+}
+
+[data-card-theme="gold"] {
+  /* ─── Surfaces ──────────────────────────────────────────────────────────── */
+  --color-surface-page: #18140c;
+  --color-surface-panel: #211c10;
+  --color-border-default: #3d3315;
+
+  /* ─── Text ──────────────────────────────────────────────────────────────── */
+  --color-text-primary: #f0d060;
+  --color-text-secondary: #9a8030;
+
+  /* ─── Chat bubbles ──────────────────────────────────────────────────────── */
+  --color-chat-user-bubble: #c49010;
+  --color-chat-user-text: #fff8d0;
+  --color-chat-assistant-bubble: #2a2310;
+  --color-chat-assistant-text: #f0d060;
+  --color-chat-system-bubble: #302810;
+  --color-chat-system-text: #c49010;
+
+  /* ─── Tarot cards ───────────────────────────────────────────────────────── */
+  --color-card-border: #5a4a00;
+  --color-card-hover-border: #d4a800;
+
+  /* ─── Theme badge ───────────────────────────────────────────────────────── */
+  --color-theme-badge-bg: #302810;
+  --color-theme-badge-text: #d4a800;
+  --color-theme-badge-border: #5a4a00;
+
+  /* ─── Danger ────────────────────────────────────────────────────────────── */
+  --color-danger: #e05050;
+}

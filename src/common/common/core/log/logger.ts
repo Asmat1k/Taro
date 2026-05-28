@@ -1,16 +1,16 @@
 import { LogLevel } from "./LogLevel"
 
 interface Logger {
-  trace(message: string, ...args: unknown[]): void
-  debug(message: string, ...args: unknown[]): void
-  info(message: string, ...args: unknown[]): void
-  warn(message: string, ...args: unknown[]): void
-  error(message: string, ...args: unknown[]): void
+  trace(message: string, ...args: Array<unknown>): void
+  debug(message: string, ...args: Array<unknown>): void
+  info(message: string, ...args: Array<unknown>): void
+  warn(message: string, ...args: Array<unknown>): void
+  error(message: string, ...args: Array<unknown>): void
 }
 
 const isDev = import.meta.env.DEV
 
-function print(level: LogLevel, scope: string, template: string, ...args: unknown[]): void {
+function print(level: LogLevel, scope: string, template: string, ...args: Array<unknown>): void {
   const time = getTime()
   const prefix = `[${time}] ${level} [${scope}]`
 
@@ -69,7 +69,7 @@ function getTime(): string {
   }) + `.${now.getMilliseconds().toString().padStart(3, "0")}`
 }
 
-function formatMessage(template: string, ...args: unknown[]): string {
+function formatMessage(template: string, ...args: Array<unknown>): string {
   let result = template
   for (const arg of args) {
     result = result.replace("{}", String(arg))

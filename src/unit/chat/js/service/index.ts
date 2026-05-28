@@ -1,3 +1,4 @@
 export * from "./ChatsService"
-export * from "./UserService"
 export * from "./SessionService"
+export * from "./ThemeService"
+export * from "./UserService"

@@ -1,14 +1,20 @@
 import { injectable } from "inversify"
+import { z } from "zod"
 import i18n from "@i18n"
 import {
   SessionStatus,
   SessionStage,
   type Session,
+  SessionSchema,
   MessageTone,
   type SessionId,
+  SessionIdSchema,
   type SessionDetail,
+  SessionDetailSchema,
   SessionTheme,
   MessageRole,
+  SessionPredictionCreateRequestSchema,
+  SessionClarificationCreateRequestSchema,
 } from "../model"
 import { type ApiStreamHandlers } from "../model"
 
@@ -30,7 +36,8 @@ export class SessionTransportImpl implements SessionTransport {
     // headers: X-Real-IP: string (required)
     // Success 200: { sessions: Array<{ sessionId, title?, stage, status }> }
     // Errors: 401 Unauthorized, 500 Exception
-    return Promise.resolve([
+
+    const raw = [
       {
         sessionId: "6b239a23-4f1d-4f9e-a18f-4368f2fb9681",
         title: i18n.t("mock.sessionSalesForecast"),
@@ -48,7 +55,9 @@ export class SessionTransportImpl implements SessionTransport {
         stage: SessionStage.PREDICTION,
         status: SessionStatus.PENDING,
       },
-    ])
+    ]
+
+    return z.array(SessionSchema).parse(raw)
   }
 
   async createPredictionSession(tone: MessageTone, message: string): Promise<SessionId> {
@@ -57,9 +66,10 @@ export class SessionTransportImpl implements SessionTransport {
     // body: { tone, message }
     // Success 202: { sessionId }
     // Errors: 401, 400, 422, 500
-    // @ts-expect-error TS6133 — тело запроса для будущего API-вызова
-    const _requestBody = { tone, message }
-    return Promise.resolve(crypto.randomUUID())
+
+    SessionPredictionCreateRequestSchema.parse({ tone, message })
+
+    return SessionIdSchema.parse(crypto.randomUUID())
   }
 
   async getSession(sessionId: SessionId): Promise<SessionDetail> {
@@ -67,9 +77,10 @@ export class SessionTransportImpl implements SessionTransport {
     // headers: X-Real-IP: string, X-Session-Id: uuid (required)
     // Success 200: SessionDetail
     // Errors: 401, 403, 500
-    // @ts-expect-error TS6133 — параметр для будущего API-вызова
-    const _sessionId = sessionId
-    return Promise.resolve({
+
+    SessionIdSchema.parse(sessionId)
+
+    const raw = {
       stage: SessionStage.PREDICTION,
       status: SessionStatus.DONE,
       tone: MessageTone.NEUTRAL,
@@ -111,7 +122,9 @@ export class SessionTransportImpl implements SessionTransport {
           content: i18n.t("mock.assistantResponse"),
         },
       ],
-    })
+    }
+
+    return SessionDetailSchema.parse(raw)
   }
 
   async createClarificationSession(sessionId: SessionId, message: string): Promise<SessionId> {
@@ -120,9 +133,11 @@ export class SessionTransportImpl implements SessionTransport {
     // body: { message }
     // Success 202: { sessionId }
     // Errors: 401, 403, 400, 409, 500
-    // @ts-expect-error TS6133 — параметры для будущего API-вызова
-    const _body = { sessionId, message }
-    return Promise.resolve(sessionId)
+
+    SessionIdSchema.parse(sessionId)
+    SessionClarificationCreateRequestSchema.parse({ message })
+
+    return SessionIdSchema.parse(sessionId)
   }
 
   streamSession(sessionId: SessionId, handlers: ApiStreamHandlers): AbortController {
@@ -130,8 +145,8 @@ export class SessionTransportImpl implements SessionTransport {
     // headers: X-Real-IP: string, X-Session-Id: uuid (required)
     // Response: SSE stream (text/event-stream)
     // Events: error | theme | cards | message
-    // @ts-expect-error TS6133 — параметр для будущего API-вызова
-    const _sessionId = sessionId
+
+    SessionIdSchema.parse(sessionId)
 
     const controller = new AbortController()
     const timers: Array<ReturnType<typeof setTimeout>> = []

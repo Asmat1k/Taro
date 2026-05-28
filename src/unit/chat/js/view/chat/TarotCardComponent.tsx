@@ -1,5 +1,5 @@
 import "./TarotCardComponent.scss"
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { useTranslation } from "react-i18next"
 import { type CardMessage } from "@common"
@@ -20,10 +20,18 @@ export const TarotCardComponent = observer(function TarotCardComponent({ card }:
 
   const imageUrl = `/api/cards/${card.cardId}/image`
 
+  const onFlip = useCallback(() => {
+    setFlipped((prev) => !prev)
+  }, [])
+
+  const onImgError = useCallback(() => {
+    setImgError(true)
+  }, [])
+
   return (
     <div
       className={`tarot-card${flipped ? " tarot-card--flipped" : ""}`}
-      onClick={() => setFlipped((prev) => !prev)}
+      onClick={onFlip}
       title={t("chat.panel.cardHint")}
     >
       <div className="tarot-card__inner">
@@ -38,7 +46,7 @@ export const TarotCardComponent = observer(function TarotCardComponent({ card }:
               className="tarot-card__front-image"
               src={imageUrl}
               alt={card.title}
-              onError={() => setImgError(true)}
+              onError={onImgError}
               loading="lazy"
             />
           )}

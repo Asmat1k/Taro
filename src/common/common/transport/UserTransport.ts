@@ -1,5 +1,5 @@
 import { injectable } from "inversify"
-import { type UserInfo } from "../model"
+import { type UserInfo, UserInfoSchema } from "../model"
 
 export const UserTransport$type = Symbol("UserTransport")
 
@@ -25,10 +25,12 @@ export class UserTransportImpl implements UserTransport {
     // 401 Unauthorized (typed structure)
     // 500 Exception (typed structure)
 
-    return Promise.resolve({
+    const raw = {
       name: "Иван Петров",
       description: "Frontend developer. Работаю с React и TypeScript.",
-    })
+    }
+
+    return UserInfoSchema.parse(raw)
   }
 
   constructor(
