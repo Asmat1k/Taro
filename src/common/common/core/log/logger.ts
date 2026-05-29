@@ -14,7 +14,7 @@ function print(level: LogLevel, scope: string, template: string, ...args: Array<
   const time = getTime()
   const prefix = `[${time}] ${level} [${scope}]`
 
-  const message = formatMessage(template, args)
+  const message = formatMessage(template, ...args)
 
   switch (level) {
     case LogLevel.TRACE:
@@ -69,10 +69,20 @@ function getTime(): string {
   }) + `.${now.getMilliseconds().toString().padStart(3, "0")}`
 }
 
+function serialize(value: unknown): string {
+  if (value instanceof Headers) {
+    return JSON.stringify(Object.fromEntries(value))
+  }
+  if (typeof value === "object" && value !== null) {
+    return JSON.stringify(value)
+  }
+  return String(value)
+}
+
 function formatMessage(template: string, ...args: Array<unknown>): string {
   let result = template
   for (const arg of args) {
-    result = result.replace("{}", String(arg))
+    result = result.replace("{}", serialize(arg))
   }
   return result
 }

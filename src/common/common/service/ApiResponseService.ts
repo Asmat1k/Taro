@@ -2,6 +2,7 @@ import type z from "zod"
 import { injectable } from "inversify"
 import { ApiErrorSchema } from "../model"
 import { CoreTransportError, CoreTransportNetworkError } from "../model"
+import { nullToUndefined } from "./nullToUndefined"
 
 export const ApiResponseService$type = Symbol("ApiResponseService")
 
@@ -15,7 +16,7 @@ export interface ApiResponseService {
 export class ApiResponseServiceImpl implements ApiResponseService {
  
   parse<T>(raw: unknown, schema: z.ZodType<T>): T {
-    return schema.parse(raw)
+    return schema.parse(nullToUndefined(raw))
   }
 
   async handleInvalid(response: Response): Promise<never> {
