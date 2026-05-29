@@ -14,6 +14,8 @@
     "settings": "Настройки",
     "settingsModal": {
       "title": "Настройки профиля",
+      "titleRegistration": "Добро пожаловать!",
+      "startButton": "Начать",
       "name": "Имя",
       "description": "Расскажи о себе",
       "placeholders": {
@@ -30,18 +32,18 @@
       }
     },
     "panel": {
-      "emptyTitle": "Задайте вопрос таро",
+      "emptyTitle": "О чём хотите узнать?",
       "emptySub": "Выберите существующий чат или начните новый",
-      "emptySessionDesc": "Загрузка истории...",
+      "emptySessionDesc": "Начните расклад с вашего первого вопроса",
       "newChatTitle": "Новый сеанс гадания",
       "sendPlaceholder": "Введите ваш вопрос...",
       "clarificationPlaceholder": "Задайте уточняющий вопрос...",
       "loadingPlaceholder": "Таролог думает...",
       "toneLabel": "Тон:",
       "tones": {
-        "positive": "☀️ Позитивный",
-        "negative": "🌑 Мрачный",
-        "neutral": "😐 Нейтральный"
+        "positive": "Позитивный",
+        "negative": "Мрачный",
+        "neutral": "Нейтральный"
       },
       "cardHint": "Нажмите, чтобы узнать значение",
       "cardArcana": {

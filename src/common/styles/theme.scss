@@ -25,36 +25,42 @@
   --color-theme-badge-text: #0958d9;
   --color-theme-badge-border: #91caff;
 
+  /* ─── Welcome ──────────────────────────────────────────────────────────── */
+  --color-welcome-bg: transparent;
+
   /* ─── Danger ────────────────────────────────────────────────────────────── */
   --color-danger: #cf1322;
 }
 
 [data-card-theme="pink"] {
   /* ─── Surfaces ──────────────────────────────────────────────────────────── */
-  --color-surface-page: #fce4f5;
-  --color-surface-panel: #fff0fb;
-  --color-border-default: #f9b8e8;
+  --color-surface-page: #f5c0e4;
+  --color-surface-panel: #fef4fb;
+  --color-border-default: #e090c8;
 
   /* ─── Text ──────────────────────────────────────────────────────────────── */
-  --color-text-primary: #5a003a;
-  --color-text-secondary: #b05090;
+  --color-text-primary: #3d0028;
+  --color-text-secondary: #8a1858;
 
   /* ─── Chat bubbles ──────────────────────────────────────────────────────── */
-  --color-chat-user-bubble: #d4007a;
+  --color-chat-user-bubble: #be005e;
   --color-chat-user-text: #ffffff;
-  --color-chat-assistant-bubble: #fff4fc;
-  --color-chat-assistant-text: #5a003a;
-  --color-chat-system-bubble: #ffe8f8;
-  --color-chat-system-text: #a00060;
+  --color-chat-assistant-bubble: #fef0fa;
+  --color-chat-assistant-text: #3d0028;
+  --color-chat-system-bubble: #fcd8f0;
+  --color-chat-system-text: #8a0050;
 
   /* ─── Tarot cards ───────────────────────────────────────────────────────── */
-  --color-card-border: #f7a8e0;
-  --color-card-hover-border: #d4007a;
+  --color-card-border: #e090c8;
+  --color-card-hover-border: #be005e;
 
   /* ─── Theme badge ───────────────────────────────────────────────────────── */
-  --color-theme-badge-bg: #ffe0f4;
-  --color-theme-badge-text: #b5006e;
-  --color-theme-badge-border: #f5a0dc;
+  --color-theme-badge-bg: #f5c8e8;
+  --color-theme-badge-text: #8a0050;
+  --color-theme-badge-border: #e090c8;
+
+  /* ─── Welcome ──────────────────────────────────────────────────────────── */
+  --color-welcome-bg: #edaed8;
 
   /* ─── Danger ────────────────────────────────────────────────────────────── */
   --color-danger: #cf1322;

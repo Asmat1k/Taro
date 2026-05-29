@@ -2,8 +2,9 @@ import "./ChatPanelComponent.scss"
 import { useCallback, useEffect, useRef, type KeyboardEvent } from "react"
 import { observer } from "mobx-react-lite"
 import { useTranslation } from "react-i18next"
-import { Button, Empty, Input, Select, Skeleton } from "antd"
-import { SendOutlined } from "@ant-design/icons"
+import { Button, Input, Select, Skeleton } from "antd"
+import { Welcome } from "@ant-design/x"
+import { SendOutlined, RocketOutlined } from "@ant-design/icons"
 import { MessageTone } from "@common"
 import { type SessionService, SessionService$type } from "../../service"
 import { useIoCBinding } from "../../ioc"
@@ -11,7 +12,7 @@ import { chatsStore } from "../../store/ChatsStore"
 import { sessionStore } from "../../store/SessionStore"
 import { TarotCardComponent } from "./TarotCardComponent"
 import { MessageItemComponent } from "./MessageItemComponent"
-import type { ChatItemCards, ChatItemMessage, ChatItemTheme } from "../../../../../common/common/model/chat"
+import { type ChatItemCards, type ChatItemMessage, type ChatItemTheme } from "@common"
 
 const TONE_OPTIONS = [
   { value: MessageTone.NEUTRAL, label: "chat.panel.tones.neutral" },
@@ -36,16 +37,17 @@ export const ChatPanelComponent = observer(function ChatPanelComponent() {
   const inputValueRef = useRef("")
 
   const selectedSessionId = chatsStore.selectedSessionId
-  const isNewChat = selectedSessionId === undefined
+  const isFreshSession = chatsStore.isFreshSession
+  const isNewChat = selectedSessionId === undefined || isFreshSession
   const { isLoadingSession, isStreaming, chatItems, selectedTone } = sessionStore
 
   useEffect(() => {
-    if (selectedSessionId) {
+    if (selectedSessionId && !isFreshSession) {
       void sessionService.loadSession(selectedSessionId)
     } else {
       sessionService.clearSession()
     }
-  }, [ selectedSessionId, sessionService ])
+  }, [ selectedSessionId, isFreshSession, sessionService ])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -100,7 +102,6 @@ export const ChatPanelComponent = observer(function ChatPanelComponent() {
   return (
     <div className="chat-panel">
       <div className="chat-panel__header">
-        <span className="chat-panel__header-icon">🔮</span>
         <div className="chat-panel__header-title">{headerTitle}</div>
         {themeItem && (
           <span className="chat-panel__theme-badge">
@@ -114,21 +115,12 @@ export const ChatPanelComponent = observer(function ChatPanelComponent() {
           <Skeleton active paragraph={{ rows: 6 }} />
         )}
 
-        {!isLoadingSession && !isNewChat && chatItems.length === 0 && !isStreaming && (
+        {chatItems.length === 0 && !isLoadingSession && !isStreaming && (
           <div className="chat-panel__empty">
-            <Empty
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
+            <Welcome
+              image={<RocketOutlined style={{ fontSize: 64 }} />}
+              title={t("chat.panel.emptyTitle")}
               description={t("chat.panel.emptySessionDesc")}
-            />
-          </div>
-        )}
-
-        {isNewChat && chatItems.length === 0 && (
-          <div className="chat-panel__empty">
-            <Empty
-              image="🔮"
-              imageStyle={{ fontSize: 64 }}
-              description={t("chat.panel.emptyTitle")}
             />
           </div>
         )}

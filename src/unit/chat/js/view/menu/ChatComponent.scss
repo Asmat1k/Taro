@@ -65,6 +65,14 @@
     &__empty {
       margin-top: 8px;
     }
+
+    &__loader {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      min-height: 120px;
+    }
   }
 }
 
