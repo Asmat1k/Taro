@@ -4,15 +4,14 @@ import { observer } from "mobx-react-lite"
 import { useTranslation } from "react-i18next"
 import { Button, Input, Select, Skeleton } from "antd"
 import { Welcome } from "@ant-design/x"
-import { SendOutlined, RocketOutlined } from "@ant-design/icons"
-import { MessageTone } from "@common"
+import { SendOutlined } from "@ant-design/icons"
+import { MessageTone, type ChatItemCards, type ChatItemMessage, type ChatItemTheme } from "@common"
 import { type SessionService, SessionService$type } from "../../service"
 import { useIoCBinding } from "../../ioc"
 import { chatsStore } from "../../store/ChatsStore"
 import { sessionStore } from "../../store/SessionStore"
 import { TarotCardComponent } from "./TarotCardComponent"
 import { MessageItemComponent } from "./MessageItemComponent"
-import { type ChatItemCards, type ChatItemMessage, type ChatItemTheme } from "@common"
 
 const TONE_OPTIONS = [
   { value: MessageTone.NEUTRAL, label: "chat.panel.tones.neutral" },
@@ -118,7 +117,6 @@ export const ChatPanelComponent = observer(function ChatPanelComponent() {
         {chatItems.length === 0 && !isLoadingSession && !isStreaming && (
           <div className="chat-panel__empty">
             <Welcome
-              image={<RocketOutlined style={{ fontSize: 64 }} />}
               title={t("chat.panel.emptyTitle")}
               description={t("chat.panel.emptySessionDesc")}
             />
