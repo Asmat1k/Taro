@@ -2,19 +2,20 @@ import "./ChatComponent.scss"
 import { useCallback, useEffect, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { useTranslation } from "react-i18next"
-import { Button, Empty, Skeleton } from "antd"
+import { Button, Empty, Spin } from "antd"
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   SettingOutlined,
 } from "@ant-design/icons"
 import { Conversations } from "@ant-design/x"
-import { type ChatsService, ChatsService$type, type ThemeService, ThemeService$type } from "../../service"
+import { ThemeService$type, type ThemeService } from "@common"
+import { type ChatsService, ChatsService$type } from "../../service"
 import { useSessionItems } from "../../hooks"
 import { useIoCBinding } from "../../ioc"
 import { chatsStore } from "../../store"
-import { SettingsModalComponent } from "../settings/SettingsModalComponent"
 import { ChatPanelComponent } from "../chat/ChatPanelComponent"
+import { SettingsModalComponent } from "../settings/SettingsModalComponent"
 
 export const ChatComponent = observer(function ChatComponent() {
   const { t } = useTranslation()
@@ -74,7 +75,9 @@ export const ChatComponent = observer(function ChatComponent() {
 
         <div className="chat-sidebar__content">
           {isLoading && (
-            <Skeleton active paragraph={{ rows: 6 }} />
+            <div className="chat-sidebar__loader">
+              <Spin size="large" />
+            </div>
           )}
 
           {isEmpty && (

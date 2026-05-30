@@ -1,6 +1,5 @@
 import { observable } from "mobx"
-import { type MessageTone, MessageTone as MessageToneEnum } from "@common"
-import { type ChatItem } from "../../../../common/common/model/chat"
+import { type MessageTone, MessageTone as MessageToneEnum, type ChatItem } from "@common"
 
 export const SessionStore$type = Symbol("SessionStore")
 

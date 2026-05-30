@@ -7,9 +7,8 @@ import { Welcome } from "@ant-design/x"
 import { SendOutlined } from "@ant-design/icons"
 import { MessageTone, type ChatItemCards, type ChatItemMessage, type ChatItemTheme } from "@common"
 import { type SessionService, SessionService$type } from "../../service"
+import { chatsStore, sessionStore } from "../../store"
 import { useIoCBinding } from "../../ioc"
-import { chatsStore } from "../../store/ChatsStore"
-import { sessionStore } from "../../store/SessionStore"
 import { TarotCardComponent } from "./TarotCardComponent"
 import { MessageItemComponent } from "./MessageItemComponent"
 
@@ -36,17 +35,16 @@ export const ChatPanelComponent = observer(function ChatPanelComponent() {
   const inputValueRef = useRef("")
 
   const selectedSessionId = chatsStore.selectedSessionId
-  const isFreshSession = chatsStore.isFreshSession
-  const isNewChat = selectedSessionId === undefined || isFreshSession
+  const isNewChat = selectedSessionId === undefined
   const { isLoadingSession, isStreaming, chatItems, selectedTone } = sessionStore
 
   useEffect(() => {
-    if (selectedSessionId && !isFreshSession) {
+    if (selectedSessionId) {
       void sessionService.loadSession(selectedSessionId)
     } else {
       sessionService.clearSession()
     }
-  }, [ selectedSessionId, isFreshSession, sessionService ])
+  }, [ selectedSessionId, sessionService ])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" })

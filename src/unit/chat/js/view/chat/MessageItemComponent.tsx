@@ -1,7 +1,6 @@
 import "./MessageItemComponent.scss"
 import { observer } from "mobx-react-lite"
-import { MessageRole } from "@common"
-import type { ChatItemMessage } from "../../../../../common/common/model/chat"
+import { MessageRole, type ChatItemMessage } from "@common"
 
 type Props = {
   item: ChatItemMessage

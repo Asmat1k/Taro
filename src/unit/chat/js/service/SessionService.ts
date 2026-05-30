@@ -11,10 +11,9 @@ import {
   type SessionId,
   type CardMessage,
   type SessionTheme,
+  type ChatItemMessage,
 } from "@common"
-import { ChatsStore$type, type ChatsStore } from "../store/ChatsStore"
-import { SessionStore$type, type SessionStore } from "../store/SessionStore"
-import type { ChatItemMessage } from "../../../../common/common/model/chat"
+import { ChatsStore$type, type ChatsStore, SessionStore$type, type SessionStore } from "../store"
 
 export const SessionService$type = Symbol("SessionService")
 

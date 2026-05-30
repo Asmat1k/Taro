@@ -7,10 +7,10 @@ import {
   Input,
   Modal,
   Radio,
-  Skeleton,
+  Spin,
 } from "antd"
-import { CardTheme, type UserInfo, themeStore } from "@common"
-import { UserService$type, type UserService, ThemeService$type, type ThemeService } from "../../service"
+import { CardTheme, type UserInfo, themeStore, ThemeService$type, type ThemeService } from "@common"
+import { UserService$type, type UserService } from "../../service"
 import { useIoCBinding } from "../../ioc"
 import { userStore } from "../../store"
 
@@ -21,9 +21,10 @@ type FormValues = UserInfo & { cardTheme: CardTheme }
 type Props = {
   open: boolean
   onClose: VoidFunction
+  isRegistration?: boolean
 }
 
-export const SettingsModalComponent = observer(function SettingsModalComponent({ open, onClose }: Props) {
+export const SettingsModalComponent = observer(function SettingsModalComponent({ open, onClose, isRegistration = false }: Props) {
   const { t } = useTranslation()
   const userService = useIoCBinding<UserService>(UserService$type)
   const themeService = useIoCBinding<ThemeService>(ThemeService$type)
@@ -36,15 +37,19 @@ export const SettingsModalComponent = observer(function SettingsModalComponent({
       return
     }
 
-    void userService.getUser()
-      .then((user) => {
-        form.setFieldsValue({
-          name: user.name,
-          description: user.description,
-          cardTheme: themeStore.cardTheme,
-        })
+    const populate = (user: UserInfo | null) => {
+      form.setFieldsValue({
+        name: user?.name ?? "",
+        description: user?.description,
+        cardTheme: themeStore.cardTheme,
       })
+    }
 
+    if (userStore.user) {
+      populate(userStore.user)
+    } else {
+      void userService.getUser().then(populate)
+    }
   }, [ form, open, userService ])
 
   const onSave = useCallback(async() => {
@@ -52,23 +57,33 @@ export const SettingsModalComponent = observer(function SettingsModalComponent({
     if (values.cardTheme) {
       themeService.applyTheme(values.cardTheme)
     }
-    console.log(values)
     onClose()
-  }, [ form, onClose, themeService ])
+    void userService.saveUser(values.name, values.description)
+  }, [ form, onClose, themeService, userService ])
+
+  const title = isRegistration
+    ? t("chat.settingsModal.titleRegistration")
+    : t("chat.settingsModal.title")
 
   return (
     <Modal
-      title={t("chat.settingsModal.title")}
+      title={title}
       open={open}
-      onCancel={onClose}
+      onCancel={isRegistration ? undefined : onClose}
       onOk={onSave}
-      okText={t("common.save")}
+      okText={isRegistration ? t("chat.settingsModal.startButton") : t("common.save")}
       okButtonProps={{ disabled: isLoading || form.getFieldsError().length > 0 }}
-      cancelText={t("common.cancel")}
+      cancelText={isRegistration ? null : t("common.cancel")}
+      cancelButtonProps={isRegistration ? { style: { display: "none" } } : undefined}
+      closable={!isRegistration}
+      maskClosable={!isRegistration}
+      keyboard={!isRegistration}
       destroyOnClose
     >
       {isLoading ? (
-        <Skeleton active paragraph={{ rows: 4 }} />
+        <div style={{ display: "flex", justifyContent: "center", padding: "32px 0" }}>
+          <Spin size="large" />
+        </div>
       ) : (
         <Form<FormValues>
           form={form}
