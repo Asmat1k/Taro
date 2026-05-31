@@ -22,6 +22,9 @@ export class UserServiceImpl implements UserService {
       const user = await this.userTransport.getUser()
       runInAction(() => {
         this.userStore.isLoadingUser = false
+        this.userStore.user = user
+        this.userStore.isAuthenticated = user !== undefined
+        this.userStore.isNewUser = user === undefined
       })
       this.log.info("Get user | done")
       return user
@@ -35,14 +38,18 @@ export class UserServiceImpl implements UserService {
   }
 
   async saveUser(name: string, description?: string): Promise<void> {
-    this.log.info("Save user")
-    runInAction(() => {
-      this.userStore.isLoadingUser = true
-    })
+    this.log.info("Save user | isNew={}", this.userStore.isNewUser)
+    runInAction(() => { this.userStore.isLoadingUser = true })
     try {
-      await this.userTransport.updateUser(name, description)
+      if (this.userStore.isNewUser) {
+        await this.userTransport.createUser(name, description)
+        runInAction(() => { this.userStore.isNewUser = false })
+      } else {
+        await this.userTransport.updateUser(name, description)
+      }
       runInAction(() => {
         this.userStore.isLoadingUser = false
+        this.userStore.isAuthenticated = true
       })
       this.log.info("Save user | done")
     } catch (error) {

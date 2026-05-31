@@ -2,7 +2,7 @@ import "./TarotCardComponent.scss"
 import { useCallback, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { useTranslation } from "react-i18next"
-import { type CardMessage } from "@common"
+import { type CardMessage, themeStore } from "@common"
 
 type Props = {
   card: CardMessage
@@ -12,13 +12,14 @@ export const TarotCardComponent = observer(function TarotCardComponent({ card }:
   const { t } = useTranslation()
   const [ flipped, setFlipped ] = useState(false)
   const [ imgError, setImgError ] = useState(false)
+  const theme = themeStore.cardTheme
 
   const arcanaLabel =
     card.arcana === "major"
       ? t("chat.panel.cardArcana.major")
       : t("chat.panel.cardArcana.minor")
 
-  const imageUrl = `/api/cards/${card.cardId}/image`
+  const imageUrl = `/cards/${card.cardId}/image?uiTheme=${theme}`
 
   const onFlip = useCallback(() => {
     setFlipped((prev) => !prev)

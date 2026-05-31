@@ -2,18 +2,11 @@ import "./SettingsModalComponent.scss"
 import { useCallback, useEffect } from "react"
 import { observer } from "mobx-react-lite"
 import { useTranslation } from "react-i18next"
-import {
-  Form,
-  Input,
-  Modal,
-  Radio,
-  Spin,
-} from "antd"
+import { Form, Input, Modal, Radio, Spin, type RadioChangeEvent } from "antd"
 import { CardTheme, type UserInfo, themeStore, ThemeService$type, type ThemeService } from "@common"
 import { UserService$type, type UserService } from "../../service"
 import { useIoCBinding } from "../../ioc"
 import { userStore } from "../../store"
-
 
 const { TextArea } = Input
 type FormValues = UserInfo & { cardTheme: CardTheme }
@@ -52,14 +45,15 @@ export const SettingsModalComponent = observer(function SettingsModalComponent({
     }
   }, [ form, open, userService ])
 
+  const onThemeChange = useCallback((e: RadioChangeEvent) => {
+    themeService.applyTheme(e.target.value)
+  }, [ themeService ])
+
   const onSave = useCallback(async() => {
     const values = await form.validateFields()
-    if (values.cardTheme) {
-      themeService.applyTheme(values.cardTheme)
-    }
     onClose()
     void userService.saveUser(values.name, values.description)
-  }, [ form, onClose, themeService, userService ])
+  }, [ form, onClose, userService ])
 
   const title = isRegistration
     ? t("chat.settingsModal.titleRegistration")
@@ -79,6 +73,7 @@ export const SettingsModalComponent = observer(function SettingsModalComponent({
       maskClosable={!isRegistration}
       keyboard={!isRegistration}
       destroyOnClose
+      styles={{ body: { maxHeight: "calc(90vh - 120px)", overflowY: "auto" } }}
     >
       {isLoading ? (
         <div style={{ display: "flex", justifyContent: "center", padding: "32px 0" }}>
@@ -109,6 +104,10 @@ export const SettingsModalComponent = observer(function SettingsModalComponent({
             label={t("chat.settingsModal.description")}
           >
             <TextArea
+              autoSize={{
+                minRows: 2,
+                maxRows: 5,
+              }}
               rows={4}
               placeholder={t("chat.settingsModal.placeholders.description")}
             />
@@ -117,13 +116,17 @@ export const SettingsModalComponent = observer(function SettingsModalComponent({
           <Form.Item
             name="cardTheme"
             label={t("chat.settingsModal.cardTheme.label")}
+            extra={t("chat.settingsModal.cardTheme.hint")}
           >
-            <Radio.Group className="settings-theme-group">
-              <Radio.Button value={CardTheme.Pink} className="settings-theme-option settings-theme-option--pink">
+            <Radio.Group
+              className="settings-theme-group"
+              onChange={onThemeChange}
+            >
+              <Radio.Button value={CardTheme.Pink}>
                 <span className="settings-theme-option__icon">💖</span>
                 <span className="settings-theme-option__name">{t("chat.settingsModal.cardTheme.pink")}</span>
               </Radio.Button>
-              <Radio.Button value={CardTheme.Gold} className="settings-theme-option settings-theme-option--gold">
+              <Radio.Button value={CardTheme.Gold}>
                 <span className="settings-theme-option__icon">✨</span>
                 <span className="settings-theme-option__name">{t("chat.settingsModal.cardTheme.gold")}</span>
               </Radio.Button>

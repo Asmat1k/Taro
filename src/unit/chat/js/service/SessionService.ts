@@ -271,7 +271,7 @@ export class SessionServiceImpl implements SessionService {
             const errorData = parsed as { userMessage: string }
             const streamingItem = this.findStreamingItem()
             if (streamingItem) {
-              streamingItem.content = `⚠️ ${errorData.userMessage}`
+              streamingItem.content = `${errorData.userMessage}`
               streamingItem.streaming = false
             }
             this.sessionStore.isStreaming = false

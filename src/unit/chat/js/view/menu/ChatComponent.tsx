@@ -9,7 +9,6 @@ import {
   SettingOutlined,
 } from "@ant-design/icons"
 import { Conversations } from "@ant-design/x"
-import { ThemeService$type, type ThemeService } from "@common"
 import { type ChatsService, ChatsService$type } from "../../service"
 import { useSessionItems } from "../../hooks"
 import { useIoCBinding } from "../../ioc"
@@ -20,7 +19,6 @@ import { SettingsModalComponent } from "../settings/SettingsModalComponent"
 export const ChatComponent = observer(function ChatComponent() {
   const { t } = useTranslation()
   const chatsService = useIoCBinding<ChatsService>(ChatsService$type)
-  const themeService = useIoCBinding<ThemeService>(ThemeService$type)
   const [ collapsed, setCollapsed ] = useState(false)
   const [ isSettingsOpened, setIsSettingsOpened ] = useState(false)
   const sessionItems = useSessionItems(collapsed)
@@ -30,9 +28,8 @@ export const ChatComponent = observer(function ChatComponent() {
   const hasSessions = !isLoading && sessionItems !== undefined && sessionItems.length > 0
 
   useEffect(() => {
-    themeService.loadAndApplyTheme()
     void chatsService.loadSessions()
-  }, [ chatsService, themeService ])
+  }, [ chatsService ])
 
   const onCreate = useCallback(() => {
     void chatsService.createSession()
