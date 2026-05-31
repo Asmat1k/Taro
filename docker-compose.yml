@@ -34,7 +34,7 @@ services:
     restart: unless-stopped
   
   ml-layer:
-    image: ghcr.io/etlumac/ai-tarot/taro-ml-layer:83adcafa535ad83f538ba169dfff97dadfc91858
+    image: ghcr.io/etlumac/ai-tarot/taro-ml-layer:latest
     container_name: taro_ml_layer
     ports:
       - "8001:8001"
