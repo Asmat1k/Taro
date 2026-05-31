@@ -1,5 +1,6 @@
 import "./MessageItemComponent.scss"
 import { observer } from "mobx-react-lite"
+import ReactMarkdown from "react-markdown"
 import { MessageRole, type ChatItemMessage } from "@common"
 
 type Props = {
@@ -34,6 +35,8 @@ export const MessageItemComponent = observer(function MessageItemComponent({ ite
             <span />
             <span />
           </div>
+        ) : role === MessageRole.ASSISTANT ? (
+          <ReactMarkdown>{content}</ReactMarkdown>
         ) : (
           content
         )}
