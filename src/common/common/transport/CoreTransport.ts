@@ -79,6 +79,7 @@ export class CoreTransportImpl implements CoreTransport {
  
       onclose() {
         log.info("[HTTP] stream closed GET {}", req.url)
+        controller.abort()
         handlers.onClose?.()
       },
  

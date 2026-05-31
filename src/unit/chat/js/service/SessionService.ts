@@ -10,6 +10,8 @@ import {
   type SessionTransport,
   type SessionId,
   type CardMessage,
+  type TextMessage,
+  type SessionMessage,
   type SessionTheme,
   type ChatItemMessage,
 } from "@common"
@@ -32,6 +34,12 @@ export class SessionServiceImpl implements SessionService {
 
   async loadSession(sessionId: SessionId): Promise<void> {
     this.log.info("Load session | sessionId={}", sessionId)
+
+    if (this.sessionStore.isStreaming) {
+      this.log.info("Load session | skipped, streaming is active | sessionId={}", sessionId)
+      return
+    }
+
     try {
       runInAction(() => {
         this.sessionStore.isLoadingSession = true
@@ -230,11 +238,10 @@ export class SessionServiceImpl implements SessionService {
             break
           }
 
-          case "cards": {
-            const cardsData = parsed as {
-              messages: Array<{ objectType: string } & Partial<CardMessage>>
-            }
-            const cards = cardsData.messages.filter(
+          case "message": {
+            const msgData = parsed as { messages: Array<SessionMessage> }
+
+            const cards = msgData.messages.filter(
               (m): m is CardMessage => m.objectType === "card",
             )
             if (cards.length > 0) {
@@ -248,21 +255,27 @@ export class SessionServiceImpl implements SessionService {
                 },
               )
             }
-            break
-          }
 
-          case "message": {
-            const msgData = parsed as {
-              messages: Array<{ objectType: string; role: string; content: string }>
-            }
             const chunk = msgData.messages
-              .filter((m) => m.objectType === "message" && m.role === MessageRole.ASSISTANT)
+              .filter((m): m is TextMessage => m.objectType === "message" && m.role === MessageRole.ASSISTANT)
               .map((m) => m.content)
               .join("")
 
             const streamingItem = this.findStreamingItem()
             if (streamingItem && chunk) {
               streamingItem.content += chunk
+            }
+            break
+          }
+
+          case "title": {
+            const titleData = parsed as { title: string }
+            const sessionId = this.chatsStore.selectedSessionId
+            if (sessionId && titleData.title) {
+              const session = this.chatsStore.sessions.find((s) => s.sessionId === sessionId)
+              if (session) {
+                session.title = titleData.title
+              }
             }
             break
           }
