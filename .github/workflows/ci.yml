@@ -5,6 +5,11 @@ on:
     branches: [main, develop]
   pull_request:
 
+env:
+  REGISTRY: ghcr.io
+  GITHUB_OWNER_RAW: ${{ github.repository_owner }}
+  GITHUB_REPO_RAW: ${{ github.event.repository.name }}
+
 jobs:
   validate:
     name: Validate
