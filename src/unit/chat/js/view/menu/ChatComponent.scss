@@ -1,24 +1,29 @@
 .chat-sidebar-page {
-  min-height: 100vh;
+  height: 100vh;
   background: var(--color-surface-page);
+  display: flex;
+
   .chat-sidebar {
     --chat-sidebar-collapsed-width: 64px;
     --sidebar-padding: 12px;
 
     width: 280px;
+    min-width: 280px;
     height: 100vh;
     padding: var(--sidebar-padding);
     background: var(--color-surface-panel);
-    border: 1px solid var(--color-border-default);
+    border-right: 1px solid var(--color-border-default);
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     gap: var(--sidebar-padding);
-    transition: width 0.2s ease;
+    transition: width 0.2s ease, min-width 0.2s ease;
     overflow: hidden;
+    flex-shrink: 0;
 
     &--collapsed {
       width: var(--chat-sidebar-collapsed-width);
+      min-width: var(--chat-sidebar-collapsed-width);
 
       .chat-sidebar__collapse-btn,
       .chat-sidebar__new-chat-btn {
@@ -51,8 +56,35 @@
       }
     }
 
+    &__settings-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     &__empty {
       margin-top: 8px;
     }
+
+    &__loader {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      min-height: 120px;
+    }
+  }
+}
+
+/* ─── Тема: иконки в списке сессий ─────────────────────────────────────────── */
+[data-card-theme="gold"] {
+  .ant-conversations-icon {
+    color: var(--color-text-secondary);
+  }
+}
+
+[data-card-theme="pink"] {
+  .ant-conversations-icon {
+    color: var(--color-text-secondary);
   }
 }

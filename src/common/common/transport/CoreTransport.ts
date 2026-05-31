@@ -1,8 +1,7 @@
 import { fetchEventSource } from "@microsoft/fetch-event-source"
 import { inject, injectable } from "inversify"
-import { type ApiRequest, type ApiStreamRequest, type ApiStreamHandlers } from "../model"
+import { type ApiRequest, type ApiStreamRequest, type ApiStreamHandlers, CoreTransportNetworkError } from "../model"
 import { ApiResponseService$type, type ApiResponseService, ApiRequestService$type, type ApiRequestService } from "../service"
-import { CoreTransportNetworkError } from "../model"
 import { makeLogger } from "../core"
 
 export const CoreTransport$type = Symbol("CoreTransport")
@@ -35,9 +34,13 @@ export class CoreTransportImpl implements CoreTransport {
       if (response.status === 204) {
         return this.apiResponseService.parse(undefined, req.responseSchema)
       }
-      const raw = await response.json()
+      const text = await response.text()
+      if (!text) {
+        return this.apiResponseService.parse(undefined, req.responseSchema)
+      }
+      const raw = JSON.parse(text)
       this.log.info("[HTTP] response {} {} {}", req.method, req.url, response.status)
-      this.log.debug("[HTTP] response {} {} {} (headers:{}) (body:{})", req.method, req.url, response.status, response.headers, raw)
+      this.log.debug("[HTTP] response {} {} {} (headers:{}) (body:{})", req.method, req.url, response.status, response.headers, JSON.stringify(raw))
       return this.apiResponseService.parse(raw, req.responseSchema)
     } catch (cause) {
       this.log.error("[HTTP] request {} {} | failed", req.method, req.url, cause)
@@ -76,6 +79,7 @@ export class CoreTransportImpl implements CoreTransport {
  
       onclose() {
         log.info("[HTTP] stream closed GET {}", req.url)
+        controller.abort()
         handlers.onClose?.()
       },
  
