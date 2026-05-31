@@ -2,6 +2,7 @@ import { inject, injectable } from "inversify"
 import { runInAction } from "mobx"
 import {
   makeLogger,
+  generateUUID,
   MessageRole,
   MessageTone,
   SessionStage,
@@ -54,7 +55,7 @@ export class SessionServiceImpl implements SessionService {
         if (detail.theme) {
           this.sessionStore.chatItems.push({
             type: "theme",
-            id: crypto.randomUUID(),
+            id: generateUUID(),
             theme: detail.theme,
           })
         }
@@ -65,7 +66,7 @@ export class SessionServiceImpl implements SessionService {
           if (cardBatch.length > 0) {
             this.sessionStore.chatItems.push({
               type: "cards",
-              id: crypto.randomUUID(),
+              id: generateUUID(),
               cards: [ ...cardBatch ],
             })
             cardBatch.length = 0
@@ -80,7 +81,7 @@ export class SessionServiceImpl implements SessionService {
             if (msg.role !== MessageRole.SYSTEM) {
               this.sessionStore.chatItems.push({
                 type: "message",
-                id: crypto.randomUUID(),
+                id: generateUUID(),
                 role: msg.role,
                 content: msg.content,
                 streaming: false,
@@ -119,7 +120,7 @@ export class SessionServiceImpl implements SessionService {
     runInAction(() => {
       this.sessionStore.chatItems.push({
         type: "message",
-        id: crypto.randomUUID(),
+        id: generateUUID(),
         role: MessageRole.USER,
         content: message,
         streaming: false,
@@ -231,7 +232,7 @@ export class SessionServiceImpl implements SessionService {
               0,
               {
                 type: "theme",
-                id: crypto.randomUUID(),
+                id: generateUUID(),
                 theme: themeData.theme,
               },
             )
@@ -250,7 +251,7 @@ export class SessionServiceImpl implements SessionService {
                 0,
                 {
                   type: "cards",
-                  id: crypto.randomUUID(),
+                  id: generateUUID(),
                   cards,
                 },
               )
@@ -280,7 +281,8 @@ export class SessionServiceImpl implements SessionService {
             break
           }
 
-          case "error": {
+          case "error":
+          case "EventType.ERROR": {
             const errorData = parsed as { userMessage: string }
             const streamingItem = this.findStreamingItem()
             if (streamingItem) {
