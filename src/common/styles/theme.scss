@@ -1,5 +1,98 @@
 :root {
+  /* ─── Surfaces ──────────────────────────────────────────────────────────── */
   --color-surface-page: #f5f5f5;
   --color-surface-panel: #ffffff;
   --color-border-default: #f0f0f0;
+
+  /* ─── Text ──────────────────────────────────────────────────────────────── */
+  --color-text-primary: #1f2937;
+  --color-text-secondary: #6b7280;
+
+  /* ─── Chat bubbles ──────────────────────────────────────────────────────── */
+  --color-chat-user-bubble: #1677ff;
+  --color-chat-user-text: #ffffff;
+  --color-chat-assistant-bubble: #ffffff;
+  --color-chat-assistant-text: #1f2937;
+  --color-chat-system-bubble: #fffbe6;
+  --color-chat-system-text: #d46b08;
+
+  /* ─── Tarot cards ───────────────────────────────────────────────────────── */
+  --color-card-border: #d9d9d9;
+  --color-card-hover-border: #1677ff;
+
+  /* ─── Theme badge ───────────────────────────────────────────────────────── */
+  --color-theme-badge-bg: #e6f4ff;
+  --color-theme-badge-text: #0958d9;
+  --color-theme-badge-border: #91caff;
+
+  /* ─── Welcome ──────────────────────────────────────────────────────────── */
+  --color-welcome-bg: transparent;
+
+  /* ─── Danger ────────────────────────────────────────────────────────────── */
+  --color-danger: #cf1322;
+}
+
+[data-card-theme="pink"] {
+  /* ─── Surfaces ──────────────────────────────────────────────────────────── */
+  --color-surface-page: #f5c0e4;
+  --color-surface-panel: #fef4fb;
+  --color-border-default: #e090c8;
+
+  /* ─── Text ──────────────────────────────────────────────────────────────── */
+  --color-text-primary: #3d0028;
+  --color-text-secondary: #8a1858;
+
+  /* ─── Chat bubbles ──────────────────────────────────────────────────────── */
+  --color-chat-user-bubble: #be005e;
+  --color-chat-user-text: #ffffff;
+  --color-chat-assistant-bubble: #fef0fa;
+  --color-chat-assistant-text: #3d0028;
+  --color-chat-system-bubble: #fcd8f0;
+  --color-chat-system-text: #8a0050;
+
+  /* ─── Tarot cards ───────────────────────────────────────────────────────── */
+  --color-card-border: #e090c8;
+  --color-card-hover-border: #be005e;
+
+  /* ─── Theme badge ───────────────────────────────────────────────────────── */
+  --color-theme-badge-bg: #f5c8e8;
+  --color-theme-badge-text: #8a0050;
+  --color-theme-badge-border: #e090c8;
+
+  /* ─── Welcome ──────────────────────────────────────────────────────────── */
+  --color-welcome-bg: #edaed8;
+
+  /* ─── Danger ────────────────────────────────────────────────────────────── */
+  --color-danger: #cf1322;
+}
+
+[data-card-theme="gold"] {
+  /* ─── Surfaces ──────────────────────────────────────────────────────────── */
+  --color-surface-page: #18140c;
+  --color-surface-panel: #211c10;
+  --color-border-default: #3d3315;
+
+  /* ─── Text ──────────────────────────────────────────────────────────────── */
+  --color-text-primary: #f0d060;
+  --color-text-secondary: #9a8030;
+
+  /* ─── Chat bubbles ──────────────────────────────────────────────────────── */
+  --color-chat-user-bubble: #c49010;
+  --color-chat-user-text: #fff8d0;
+  --color-chat-assistant-bubble: #2a2310;
+  --color-chat-assistant-text: #f0d060;
+  --color-chat-system-bubble: #302810;
+  --color-chat-system-text: #c49010;
+
+  /* ─── Tarot cards ───────────────────────────────────────────────────────── */
+  --color-card-border: #5a4a00;
+  --color-card-hover-border: #d4a800;
+
+  /* ─── Theme badge ───────────────────────────────────────────────────────── */
+  --color-theme-badge-bg: #302810;
+  --color-theme-badge-text: #d4a800;
+  --color-theme-badge-border: #5a4a00;
+
+  /* ─── Danger ────────────────────────────────────────────────────────────── */
+  --color-danger: #e05050;
 }

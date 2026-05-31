@@ -1,4 +1,6 @@
 export * from "./api"
+export * from "./chat"
 export * from "./error"
 export * from "./message"
 export * from "./session"
+export * from "./user"

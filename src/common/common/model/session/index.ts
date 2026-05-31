@@ -1,4 +1,7 @@
 export * from "./Session"
 export * from "./SessionStage"
 export * from "./SessionStatus"
+export * from "./SessionTheme"
+export * from "./SessionDetail"
 export * from "./prediction/SessionPredictionCreateRequest"
+export * from "./clarification/SessionClarificationCreateRequest"

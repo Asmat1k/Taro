@@ -1,0 +1,131 @@
+import "./SettingsModalComponent.scss"
+import { useCallback, useEffect } from "react"
+import { observer } from "mobx-react-lite"
+import { useTranslation } from "react-i18next"
+import { Form, Input, Modal, Radio, Spin, type RadioChangeEvent } from "antd"
+import { CardTheme, type UserInfo, themeStore, ThemeService$type, type ThemeService } from "@common"
+import { UserService$type, type UserService } from "../../service"
+import { useIoCBinding } from "../../ioc"
+import { userStore } from "../../store"
+
+const { TextArea } = Input
+type FormValues = UserInfo & { cardTheme: CardTheme }
+
+type Props = {
+  open: boolean
+  onClose: VoidFunction
+  isRegistration?: boolean
+}
+
+export const SettingsModalComponent = observer(function SettingsModalComponent({ open, onClose, isRegistration = false }: Props) {
+  const { t } = useTranslation()
+  const userService = useIoCBinding<UserService>(UserService$type)
+  const themeService = useIoCBinding<ThemeService>(ThemeService$type)
+  const [ form ] = Form.useForm<FormValues>()
+
+  const isLoading = userStore.isLoadingUser
+
+  useEffect(() => {
+    if (!open) {
+      return
+    }
+
+    form.setFieldsValue({
+      name: userStore.user?.name ?? "",
+      description: userStore.user?.description,
+      cardTheme: themeStore.cardTheme,
+    })
+  }, [ form, open ])
+
+  const onThemeChange = useCallback((e: RadioChangeEvent) => {
+    themeService.applyTheme(e.target.value)
+  }, [ themeService ])
+
+  const onSave = useCallback(async() => {
+    const values = await form.validateFields()
+    onClose()
+    void userService.saveUser(values.name, values.description, isRegistration)
+  }, [ form, onClose, userService, isRegistration ])
+
+  const title = isRegistration
+    ? t("chat.settingsModal.titleRegistration")
+    : t("chat.settingsModal.title")
+
+  return (
+    <Modal
+      title={title}
+      open={open}
+      onCancel={isRegistration ? undefined : onClose}
+      onOk={onSave}
+      okText={isRegistration ? t("chat.settingsModal.startButton") : t("common.save")}
+      okButtonProps={{ disabled: isLoading || form.getFieldsError().length > 0 }}
+      cancelText={isRegistration ? null : t("common.cancel")}
+      cancelButtonProps={isRegistration ? { style: { display: "none" } } : undefined}
+      closable={!isRegistration}
+      maskClosable={!isRegistration}
+      keyboard={!isRegistration}
+      destroyOnClose
+      styles={{ body: { maxHeight: "calc(90vh - 120px)", overflowY: "auto" } }}
+    >
+      {isLoading ? (
+        <div style={{ display: "flex", justifyContent: "center", padding: "32px 0" }}>
+          <Spin size="large" />
+        </div>
+      ) : (
+        <Form<FormValues>
+          form={form}
+          layout="vertical"
+        >
+          <Form.Item
+            name="name"
+            label={t("chat.settingsModal.name")}
+            rules={[
+              {
+                required: true,
+                message: t("chat.settingsModal.validation.nameRequired"),
+              },
+            ]}
+          >
+            <Input
+              placeholder={t("chat.settingsModal.placeholders.name")}
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="description"
+            label={t("chat.settingsModal.description")}
+          >
+            <TextArea
+              autoSize={{
+                minRows: 2,
+                maxRows: 5,
+              }}
+              rows={4}
+              placeholder={t("chat.settingsModal.placeholders.description")}
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="cardTheme"
+            label={t("chat.settingsModal.cardTheme.label")}
+            extra={t("chat.settingsModal.cardTheme.hint")}
+          >
+            <Radio.Group
+              className="settings-theme-group"
+              onChange={onThemeChange}
+            >
+              <Radio.Button value={CardTheme.Pink}>
+                <span className="settings-theme-option__icon">💖</span>
+                <span className="settings-theme-option__name">{t("chat.settingsModal.cardTheme.pink")}</span>
+              </Radio.Button>
+              <Radio.Button value={CardTheme.Gold}>
+                <span className="settings-theme-option__icon">✨</span>
+                <span className="settings-theme-option__name">{t("chat.settingsModal.cardTheme.gold")}</span>
+              </Radio.Button>
+            </Radio.Group>
+          </Form.Item>
+        </Form>
+      )}
+    </Modal>
+  )
+})

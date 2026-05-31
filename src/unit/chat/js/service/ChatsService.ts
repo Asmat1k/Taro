@@ -1,14 +1,9 @@
-import i18n from "@i18n"
 import { inject, injectable } from "inversify"
 import { runInAction } from "mobx"
 import {
-  MessageTone,
-  SessionStatus,
-  SessionStage,
   SessionTransport$type,
   type SessionTransport,
   makeLogger,
-  type SessionId
 } from "@common"
 import { type ChatsStore, ChatsStore$type } from "../store"
 
@@ -16,9 +11,7 @@ export const ChatsService$type = Symbol("ChatsService")
 
 export interface ChatsService {
   loadSessions(): Promise<void>
-
-  createSession(): Promise<void>
-  
+  createSession(): void
   selectSession(sessionId: string): void
 }
 
@@ -43,33 +36,10 @@ export class ChatsServiceImpl implements ChatsService {
     }
   }
 
-  async createSession(): Promise<void> {
-    this.log.info("Create session")
-    try {
-      const newChatTitle = i18n.t("chat.newChat")
-      const sessionId = await this.sessionTransport.createPredictionSession(
-        MessageTone.NEUTRAL,
-        newChatTitle,
-      )
-      this.updateSessions(sessionId, newChatTitle)
-      this.log.info("Create session | done | sessionId={}", sessionId)
-    } catch (error) {
-      this.log.error("Create session | failed | error={}", error)
-    }
-  }
-
-  private updateSessions(sessionId: SessionId, newChatTitle: string): void {
-     runInAction(() => {
-      this.chatsStore.sessions = [
-        {
-          sessionId,
-          title: newChatTitle,
-          stage: SessionStage.PREDICTION,
-          status: SessionStatus.PENDING,
-        },
-        ...this.chatsStore.sessions,
-      ]
-      this.chatsStore.selectedSessionId = sessionId
+  createSession(): void {
+    this.log.info("Create session | waiting for user input")
+    runInAction(() => {
+      this.chatsStore.selectedSessionId = undefined
     })
   }
 

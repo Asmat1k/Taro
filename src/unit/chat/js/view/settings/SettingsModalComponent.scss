@@ -1,0 +1,79 @@
+.settings-theme-group {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  padding: 3px;
+  box-sizing: border-box;
+
+  .ant-radio-button-wrapper {
+    flex: 1;
+    height: auto;
+    padding: 0;
+    border-radius: 10px !important;
+    overflow: hidden;
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+    /* Нейтральная рамка — всегда видна */
+    box-shadow: 0 0 0 1.5px var(--color-border-default);
+    transition: box-shadow 0.2s;
+
+    &::before {
+      display: none;
+    }
+
+    /* Неактивная — градиент приглушён */
+    .settings-theme-option {
+      opacity: 0.38;
+    }
+
+    /* Активная — полная яркость + яркий цветной обвод */
+    &.ant-radio-button-wrapper-checked {
+      .settings-theme-option {
+        opacity: 1;
+      }
+
+      &:has(.settings-theme-option--pink) {
+        box-shadow: 0 0 0 3px #d4007a;
+      }
+
+      &:has(.settings-theme-option--gold) {
+        box-shadow: 0 0 0 3px #c49010;
+      }
+    }
+  }
+}
+
+.settings-theme-option {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 12px;
+  width: 100%;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: opacity 0.2s, box-shadow 0.2s;
+
+  &--pink {
+    background: linear-gradient(135deg, #fce4f5 0%, #f9b8e8 100%);
+    color: #a0006e;
+  }
+
+  &--gold {
+    background: linear-gradient(135deg, #2a2310 0%, #4a3b0a 100%);
+    color: #d4a800;
+  }
+
+  &__icon {
+    font-size: 24px;
+    line-height: 1;
+  }
+
+  &__name {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+  }
+}

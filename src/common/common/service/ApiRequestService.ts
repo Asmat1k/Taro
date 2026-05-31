@@ -12,20 +12,11 @@ export interface ApiRequestService {
 export class ApiRequestServiceImpl implements ApiRequestService {
 
   buildUrl(path: string): string {
-    /*
-    * TODO
-    * Временный костыль - так как не понятно куда будут запросы
-    * Также с BASE_URL - узнать
-    */
-    // eslint-disable-next-line no-constant-condition
-    if (true) {
-      return path
-    }
     const base = this.BASE_URL.replace(/\/$/, "")
     const normalizedPath = path.startsWith("/") ? path : `/${path}`
     return `${base}${normalizedPath}`
   }
- 
+
   buildHeaders(extra?: Record<string, string>): Record<string, string> {
     return {
       "Content-Type": "application/json",
@@ -36,5 +27,5 @@ export class ApiRequestServiceImpl implements ApiRequestService {
 
   constructor() {}
 
-  private readonly BASE_URL: string = "/"
+  private readonly BASE_URL: string = import.meta.env.VITE_API_BASE_URL ?? ""
 }

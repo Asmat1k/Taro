@@ -1,60 +1,95 @@
-import { injectable } from "inversify"
-import i18n from "@i18n"
+import { inject, injectable } from "inversify"
+import { z } from "zod"
 import {
-  SessionStatus,
-  SessionStage,
   type Session,
+  SessionSchema,
   MessageTone,
   type SessionId,
+  SessionIdSchema,
+  type SessionDetail,
+  SessionDetailSchema,
+  SessionPredictionCreateRequestSchema,
+  SessionClarificationCreateRequestSchema,
+  type ApiStreamHandlers,
 } from "../model"
+import { CoreTransport$type, type CoreTransport } from "./CoreTransport"
 
 export const SessionTransport$type = Symbol("SessionTransport")
 
 export interface SessionTransport {
   listSessions(): Promise<Array<Session>>
   createPredictionSession(tone: MessageTone, message: string): Promise<SessionId>
+  getSession(sessionId: SessionId): Promise<SessionDetail>
+  createClarificationSession(sessionId: SessionId, message: string): Promise<SessionId>
+  streamSession(sessionId: SessionId, handlers: ApiStreamHandlers): AbortController
 }
+
+const SessionListResponseSchema = z.object({
+  sessions: z.array(SessionSchema),
+})
+
+const SessionIdResponseSchema = z.object({
+  sessionId: SessionIdSchema,
+})
 
 @injectable()
 export class SessionTransportImpl implements SessionTransport {
 
   async listSessions(): Promise<Array<Session>> {
-    // GET /sessions
-    // headers:
-    // X-Real-IP: string (required)
-    // Success 200:
-    // { sessions: Array<{ sessionId: uuid, title?: string, stage, status }> }
-    // Errors:
-    // 401 Unauthorized (typed structure)
-    // 500 Exception (typed structure)
-    // Пока транспортный уровень в common: возвращаем мок.
-    return Promise.resolve([
-      {
-        sessionId: "6b239a23-4f1d-4f9e-a18f-4368f2fb9681",
-        title: i18n.t("mock.sessionSalesForecast"),
-        stage: SessionStage.PREDICTION,
-        status: SessionStatus.DONE,
-      },
-      {
-        sessionId: "c39e0097-0396-49f1-a146-31c6ae86fd65",
-        title: i18n.t("mock.sessionHypothesis"),
-        stage: SessionStage.CLARIFICATION,
-        status: SessionStatus.IN_PROGRESS,
-      },
-      {
-        sessionId: "dc91f66e-70be-4aeb-946c-4cb53ca50270",
-        stage: SessionStage.PREDICTION,
-        status: SessionStatus.PENDING,
-      },
-    ])
+    const response = await this.coreTransport.request({
+      url: "/sessions",
+      method: "GET",
+      responseSchema: SessionListResponseSchema,
+    })
+    return response.sessions
   }
 
   async createPredictionSession(tone: MessageTone, message: string): Promise<SessionId> {
-    // @ts-expect-error TS6133 — тело запроса для будущего вызова API
-    const requestBody = {
-      tone,
-      message,
-    }
-    return Promise.resolve(crypto.randomUUID())
+    const body = SessionPredictionCreateRequestSchema.parse({ tone, message })
+    const response = await this.coreTransport.request({
+      url: "/session/prediction",
+      method: "POST",
+      body,
+      responseSchema: SessionIdResponseSchema,
+    })
+    return response.sessionId
   }
+
+  async getSession(sessionId: SessionId): Promise<SessionDetail> {
+    SessionIdSchema.parse(sessionId)
+    return this.coreTransport.request({
+      url: "/session",
+      method: "GET",
+      headers: { "X-Session-Id": sessionId },
+      responseSchema: SessionDetailSchema,
+    })
+  }
+
+  async createClarificationSession(sessionId: SessionId, message: string): Promise<SessionId> {
+    SessionIdSchema.parse(sessionId)
+    const body = SessionClarificationCreateRequestSchema.parse({ message })
+    const response = await this.coreTransport.request({
+      url: "/session/clarification",
+      method: "POST",
+      body,
+      headers: { "X-Session-Id": sessionId },
+      responseSchema: SessionIdResponseSchema,
+    })
+    return response.sessionId
+  }
+
+  streamSession(sessionId: SessionId, handlers: ApiStreamHandlers): AbortController {
+    SessionIdSchema.parse(sessionId)
+    return this.coreTransport.stream(
+      {
+        url: "/session/streaming",
+        headers: { "X-Session-Id": sessionId },
+      },
+      handlers,
+    )
+  }
+
+  constructor(
+    @inject(CoreTransport$type) private coreTransport: CoreTransport,
+  ) {}
 }

@@ -2,18 +2,25 @@ import "./ChatComponent.scss"
 import { useCallback, useEffect, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { useTranslation } from "react-i18next"
-import { Button, Empty, Skeleton } from "antd"
-import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons"
+import { Button, Empty, Spin } from "antd"
+import {
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  SettingOutlined,
+} from "@ant-design/icons"
 import { Conversations } from "@ant-design/x"
-import { type ChatsService, ChatsService$type } from "../service"
-import { useIoCBinding } from "../ioc"
-import { chatsStore } from "../store"
-import { useSessionItems } from "../hooks"
+import { type ChatsService, ChatsService$type } from "../../service"
+import { useSessionItems } from "../../hooks"
+import { useIoCBinding } from "../../ioc"
+import { chatsStore } from "../../store"
+import { ChatPanelComponent } from "../chat/ChatPanelComponent"
+import { SettingsModalComponent } from "../settings/SettingsModalComponent"
 
 export const ChatComponent = observer(function ChatComponent() {
-  const chatsService = useIoCBinding<ChatsService>(ChatsService$type)
   const { t } = useTranslation()
+  const chatsService = useIoCBinding<ChatsService>(ChatsService$type)
   const [ collapsed, setCollapsed ] = useState(false)
+  const [ isSettingsOpened, setIsSettingsOpened ] = useState(false)
   const sessionItems = useSessionItems(collapsed)
 
   const isLoading = chatsStore.isLoadingSessions
@@ -34,7 +41,15 @@ export const ChatComponent = observer(function ChatComponent() {
 
   const onSetCollapsed = useCallback(() => {
     setCollapsed((prev) => !prev)
-  }, [ setCollapsed ])
+  }, [])
+
+  const onOpenSettings = useCallback(() => {
+    setIsSettingsOpened(true)
+  }, [])
+
+  const onCloseSettings = useCallback(() => {
+    setIsSettingsOpened(false)
+  }, [])
 
   return (
     <div className="chat-sidebar-page">
@@ -46,6 +61,7 @@ export const ChatComponent = observer(function ChatComponent() {
         >
           {!collapsed && t("chat.collapse")}
         </Button>
+
         <Button
           className="chat-sidebar__new-chat-btn"
           type="primary"
@@ -53,8 +69,14 @@ export const ChatComponent = observer(function ChatComponent() {
         >
           {collapsed ? "+" : t("chat.newChat")}
         </Button>
+
         <div className="chat-sidebar__content">
-          {isLoading && <Skeleton active paragraph={{ rows: 6 }} />}
+          {isLoading && (
+            <div className="chat-sidebar__loader">
+              <Spin size="large" />
+            </div>
+          )}
+
           {isEmpty && (
             <Empty
               className="chat-sidebar__empty"
@@ -62,6 +84,7 @@ export const ChatComponent = observer(function ChatComponent() {
               description={collapsed ? false : t("chat.noSessions")}
             />
           )}
+
           {hasSessions && (
             <Conversations
               className="p-0"
@@ -71,7 +94,25 @@ export const ChatComponent = observer(function ChatComponent() {
             />
           )}
         </div>
+
+        <div className="chat-sidebar__footer">
+          <Button
+            className="chat-sidebar__settings-btn"
+            icon={<SettingOutlined />}
+            onClick={onOpenSettings}
+            block
+          >
+            {!collapsed && t("chat.settings")}
+          </Button>
+        </div>
       </aside>
+
+      <ChatPanelComponent />
+
+      <SettingsModalComponent
+        open={isSettingsOpened}
+        onClose={onCloseSettings}
+      />
     </div>
   )
 })

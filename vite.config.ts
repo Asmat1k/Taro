@@ -67,6 +67,12 @@ export default defineConfig(({ mode }) => {
       port: 3000,
       hmr: true,
       open: false,
+      proxy: {
+        "/sessions": "http://localhost:8000",
+        "/session": "http://localhost:8000",
+        "/user": "http://localhost:8000",
+        "/cards": "http://localhost:8000",
+      },
     },
     preview: {
       port: 1337,
