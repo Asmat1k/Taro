@@ -30,20 +30,12 @@ export const SettingsModalComponent = observer(function SettingsModalComponent({
       return
     }
 
-    const populate = (user: UserInfo | null) => {
-      form.setFieldsValue({
-        name: user?.name ?? "",
-        description: user?.description,
-        cardTheme: themeStore.cardTheme,
-      })
-    }
-
-    if (userStore.user) {
-      populate(userStore.user)
-    } else {
-      void userService.getUser().then(populate)
-    }
-  }, [ form, open, userService ])
+    form.setFieldsValue({
+      name: userStore.user?.name ?? "",
+      description: userStore.user?.description,
+      cardTheme: themeStore.cardTheme,
+    })
+  }, [ form, open ])
 
   const onThemeChange = useCallback((e: RadioChangeEvent) => {
     themeService.applyTheme(e.target.value)
@@ -52,8 +44,8 @@ export const SettingsModalComponent = observer(function SettingsModalComponent({
   const onSave = useCallback(async() => {
     const values = await form.validateFields()
     onClose()
-    void userService.saveUser(values.name, values.description)
-  }, [ form, onClose, userService ])
+    void userService.saveUser(values.name, values.description, isRegistration)
+  }, [ form, onClose, userService, isRegistration ])
 
   const title = isRegistration
     ? t("chat.settingsModal.titleRegistration")

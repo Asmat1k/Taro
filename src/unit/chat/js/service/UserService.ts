@@ -7,7 +7,7 @@ export const UserService$type = Symbol("UserService")
 
 export interface UserService {
   getUser(): Promise<UserInfo | null>
-  saveUser(name: string, description?: string): Promise<void>
+  saveUser(name: string, description?: string, isRegistration?: boolean): Promise<void>
 }
 
 @injectable()
@@ -23,8 +23,8 @@ export class UserServiceImpl implements UserService {
       runInAction(() => {
         this.userStore.isLoadingUser = false
         this.userStore.user = user
-        this.userStore.isAuthenticated = user !== undefined
-        this.userStore.isNewUser = user === undefined
+        this.userStore.isAuthenticated = true
+        this.userStore.isNewUser = false
       })
       this.log.info("Get user | done")
       return user
@@ -37,11 +37,11 @@ export class UserServiceImpl implements UserService {
     }
   }
 
-  async saveUser(name: string, description?: string): Promise<void> {
-    this.log.info("Save user | isNew={}", this.userStore.isNewUser)
+  async saveUser(name: string, description?: string, isRegistration?: boolean): Promise<void> {
+    this.log.info("Save user | isNew={}", isRegistration)
     runInAction(() => { this.userStore.isLoadingUser = true })
     try {
-      if (this.userStore.isNewUser) {
+      if (isRegistration) {
         await this.userTransport.createUser(name, description)
         runInAction(() => { this.userStore.isNewUser = false })
       } else {

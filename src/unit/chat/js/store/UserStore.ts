@@ -14,7 +14,7 @@ export interface UserStore {
 export const userStore = observable<UserStore>({
   isLoadingUser: false,
   user: null,
-  isNewUser: false,
+  isNewUser: true,
   cardTheme: CardTheme.Gold,
   isAuthenticated: false,
 })

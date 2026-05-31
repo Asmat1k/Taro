@@ -34,7 +34,11 @@ export class CoreTransportImpl implements CoreTransport {
       if (response.status === 204) {
         return this.apiResponseService.parse(undefined, req.responseSchema)
       }
-      const raw = await response.json()
+      const text = await response.text()
+      if (!text) {
+        return this.apiResponseService.parse(undefined, req.responseSchema)
+      }
+      const raw = JSON.parse(text)
       this.log.info("[HTTP] response {} {} {}", req.method, req.url, response.status)
       this.log.debug("[HTTP] response {} {} {} (headers:{}) (body:{})", req.method, req.url, response.status, response.headers, JSON.stringify(raw))
       return this.apiResponseService.parse(raw, req.responseSchema)
