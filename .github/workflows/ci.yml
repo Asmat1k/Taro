@@ -51,9 +51,6 @@ jobs:
       contents: read
       packages: write 
     needs: [build] 
-    defaults:
-      run:
-        working-directory: ./frontend
     steps:
       - uses: actions/checkout@v4
       - name: Normalize names to lowercase
