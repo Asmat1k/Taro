@@ -81,6 +81,7 @@ export class CoreTransportImpl implements CoreTransport {
         log.info("[HTTP] stream closed GET {}", req.url)
         controller.abort()
         handlers.onClose?.()
+        throw new Error("Stream closed by server — no retry")
       },
  
       onerror(error) {

@@ -56,7 +56,7 @@ export const TarotCardComponent = observer(function TarotCardComponent({ card }:
         <div className="tarot-card__face tarot-card__back">
           <div className="tarot-card__back-title">{card.title}</div>
           <div className="tarot-card__back-arcana">{arcanaLabel}</div>
-          {card.reversed && (
+          {String(card.reversed) === "true" && (
             <div className="tarot-card__back-reversed">
               {t("chat.panel.reversed")}
             </div>
