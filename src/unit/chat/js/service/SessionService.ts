@@ -60,39 +60,70 @@ export class SessionServiceImpl implements SessionService {
           })
         }
 
-        const cardBatch: Array<CardMessage> = []
+        // Разделяем карты и текстовые сообщения
+        const textMessages = detail.messages.filter(
+          (m): m is import("@common").TextMessage =>
+            m.objectType === "message" && m.role !== MessageRole.SYSTEM,
+        )
+        const allCards = detail.messages.filter(
+          (m): m is CardMessage => m.objectType === "card",
+        )
 
-        const flushCardBatch = (): void => {
-          if (cardBatch.length > 0) {
+        // Строгий формат: user → cards(N) → assistant → user → cards(1) → assistant
+        // Первые 3 карты принадлежат 1-му сообщению пользователя,
+        // следующая 1 карта — 2-му сообщению пользователя
+        const cardBatches: Array<Array<CardMessage>> = [
+          allCards.slice(0, 3),  // prediction: 3 карты
+          allCards.slice(3, 4),  // clarification: 1 карта
+        ]
+
+        let userIndex = -1
+        for (const msg of textMessages) {
+          if (msg.role === MessageRole.USER) {
+            userIndex++
             this.sessionStore.chatItems.push({
-              type: "cards",
+              type: "message",
               id: generateUUID(),
-              cards: [ ...cardBatch ],
+              role: msg.role,
+              content: msg.content,
+              streaming: false,
             })
-            cardBatch.length = 0
-          }
-        }
-
-        for (const msg of detail.messages) {
-          if (msg.objectType === "card") {
-            cardBatch.push(msg)
-          } else {
-            flushCardBatch()
-            if (msg.role !== MessageRole.SYSTEM) {
+            const batch = cardBatches[userIndex]
+            if (batch && batch.length > 0) {
               this.sessionStore.chatItems.push({
-                type: "message",
+                type: "cards",
                 id: generateUUID(),
-                role: msg.role,
-                content: msg.content,
-                streaming: false,
+                cards: batch,
               })
             }
+          } else {
+            this.sessionStore.chatItems.push({
+              type: "message",
+              id: generateUUID(),
+              role: msg.role,
+              content: msg.content,
+              streaming: false,
+            })
           }
         }
-        flushCardBatch()
 
         this.sessionStore.isLoadingSession = false
       })
+
+      if (detail.status !== SessionStatus.DONE && detail.status !== SessionStatus.FAILED) {
+        this.log.info("Load session | status={}, resuming stream | sessionId={}", detail.status, sessionId)
+        runInAction(() => {
+          this.sessionStore.chatItems.push({
+            type: "message",
+            id: "__streaming__",
+            role: MessageRole.ASSISTANT,
+            content: "",
+            streaming: true,
+          })
+          this.sessionStore.isStreaming = true
+        })
+        this.startStream(sessionId)
+      }
 
       this.log.info("Load session | done | sessionId={}", sessionId)
     } catch (error) {
@@ -220,6 +251,8 @@ export class SessionServiceImpl implements SessionService {
   }
 
   private handleStreamEvent(event: string, data: string): void {
+    if (!event || !data) return
+
     try {
       const parsed = JSON.parse(data) as unknown
 

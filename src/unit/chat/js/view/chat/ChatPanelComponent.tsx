@@ -1,5 +1,5 @@
 import "./ChatPanelComponent.scss"
-import { useCallback, useEffect, useRef, type KeyboardEvent } from "react"
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react"
 import { observer } from "mobx-react-lite"
 import { useTranslation } from "react-i18next"
 import { Button, Input, Select, Skeleton } from "antd"
@@ -30,9 +30,8 @@ const THEME_ICON: Record<string, string> = {
 export const ChatPanelComponent = observer(function ChatPanelComponent() {
   const { t } = useTranslation()
   const sessionService = useIoCBinding<SessionService>(SessionService$type)
-  const inputRef = useRef<HTMLTextAreaElement>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
-  const inputValueRef = useRef("")
+  const [ inputValue, setInputValue ] = useState("")
 
   const selectedSessionId = chatsStore.selectedSessionId
   const isNewChat = selectedSessionId === undefined
@@ -51,16 +50,12 @@ export const ChatPanelComponent = observer(function ChatPanelComponent() {
   }, [ chatItems.length ])
 
   const onSend = useCallback(() => {
-    const message = inputValueRef.current.trim()
+    const message = inputValue.trim()
     if (!message || isStreaming) return
 
-    if (inputRef.current) {
-      inputRef.current.value = ""
-      inputValueRef.current = ""
-    }
-
+    setInputValue("")
     void sessionService.sendMessage(message)
-  }, [ isStreaming, sessionService ])
+  }, [ inputValue, isStreaming, sessionService ])
 
   const onKeyDown = useCallback(
     (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -79,20 +74,26 @@ export const ChatPanelComponent = observer(function ChatPanelComponent() {
     [ sessionService ],
   )
 
+  const cardRowCount = chatItems.filter((i) => i.type === "cards").length
+  const isSessionComplete = !isNewChat && cardRowCount >= 2
+
   const isInputDisabled =
     isStreaming ||
+    isSessionComplete ||
     (!isNewChat && isLoadingSession)
 
   const placeholder = isStreaming
     ? t("chat.panel.loadingPlaceholder")
-    : isNewChat
-      ? t("chat.panel.sendPlaceholder")
-      : t("chat.panel.clarificationPlaceholder")
+    : isSessionComplete
+      ? t("chat.panel.sessionCompletePlaceholder")
+      : isNewChat
+        ? t("chat.panel.sendPlaceholder")
+        : t("chat.panel.clarificationPlaceholder")
 
   const headerTitle = isNewChat
     ? t("chat.panel.newChatTitle")
     : chatsStore.sessions.find((s) => s.sessionId === selectedSessionId)?.title ??
-      t("chat.panel.newChatTitle")
+    t("chat.panel.newChatTitle")
 
   const themeItem = chatItems.find((i): i is ChatItemTheme => i.type === "theme")
 
@@ -109,7 +110,7 @@ export const ChatPanelComponent = observer(function ChatPanelComponent() {
       </div>
       <div className="chat-panel__messages">
         {isLoadingSession && !isNewChat && (
-          <Skeleton active paragraph={{ rows: 6 }} />
+          <Skeleton active paragraph={{ rows: 6 }}/>
         )}
 
         {chatItems.length === 0 && !isLoadingSession && !isStreaming && (
@@ -139,17 +140,17 @@ export const ChatPanelComponent = observer(function ChatPanelComponent() {
             return (
               <div key={cardsItem.id} className="chat-panel__cards-row">
                 {cardsItem.cards.map((card) => (
-                  <TarotCardComponent key={card.cardId} card={card} />
+                  <TarotCardComponent key={card.cardId} card={card}/>
                 ))}
               </div>
             )
           }
 
           const msgItem = item as ChatItemMessage
-          return <MessageItemComponent key={msgItem.id} item={msgItem} />
+          return <MessageItemComponent key={msgItem.id} item={msgItem}/>
         })}
 
-        <div ref={bottomRef} />
+        <div ref={bottomRef}/>
       </div>
 
       <div className="chat-panel__input-area">
@@ -169,18 +170,18 @@ export const ChatPanelComponent = observer(function ChatPanelComponent() {
 
         <div className="chat-panel__input-row">
           <Input.TextArea
-            ref={inputRef}
             className="chat-panel__textarea"
             placeholder={placeholder}
             disabled={isInputDisabled}
-            onChange={(e) => { inputValueRef.current = e.target.value }}
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={onKeyDown}
             autoSize={{ minRows: 1, maxRows: 5 }}
             allowClear
           />
           <Button
             type="primary"
-            icon={<SendOutlined />}
+            icon={<SendOutlined/>}
             onClick={onSend}
             disabled={isInputDisabled}
             loading={isStreaming}

@@ -114,12 +114,10 @@ export const SettingsModalComponent = observer(function SettingsModalComponent({
               className="settings-theme-group"
               onChange={onThemeChange}
             >
-              <Radio.Button value={CardTheme.Pink}>
-                <span className="settings-theme-option__icon">💖</span>
+              <Radio.Button value={CardTheme.Pink} className="settings-theme-btn--pink">
                 <span className="settings-theme-option__name">{t("chat.settingsModal.cardTheme.pink")}</span>
               </Radio.Button>
-              <Radio.Button value={CardTheme.Gold}>
-                <span className="settings-theme-option__icon">✨</span>
+              <Radio.Button value={CardTheme.Gold} className="settings-theme-btn--gold">
                 <span className="settings-theme-option__name">{t("chat.settingsModal.cardTheme.gold")}</span>
               </Radio.Button>
             </Radio.Group>

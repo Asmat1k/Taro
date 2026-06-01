@@ -13,6 +13,7 @@ export const TarotCardComponent = observer(function TarotCardComponent({ card }:
   const [ flipped, setFlipped ] = useState(false)
   const [ imgError, setImgError ] = useState(false)
   const theme = themeStore.cardTheme
+  const isReversed = String(card.reversed) === "true"
 
   const arcanaLabel =
     card.arcana === "major"
@@ -36,7 +37,7 @@ export const TarotCardComponent = observer(function TarotCardComponent({ card }:
       title={t("chat.panel.cardHint")}
     >
       <div className="tarot-card__inner">
-        <div className={`tarot-card__face tarot-card__front${card.reversed ? " tarot-card__front--reversed" : ""}`}>
+        <div className={`tarot-card__face tarot-card__front${isReversed ? " tarot-card__front--reversed" : ""}`}>
           {imgError ? (
             <div className="tarot-card__front-placeholder">
               <span className="tarot-card__front-icon">🃏</span>
@@ -56,13 +57,17 @@ export const TarotCardComponent = observer(function TarotCardComponent({ card }:
         <div className="tarot-card__face tarot-card__back">
           <div className="tarot-card__back-title">{card.title}</div>
           <div className="tarot-card__back-arcana">{arcanaLabel}</div>
-          {String(card.reversed) === "true" && (
+          {isReversed && (
             <div className="tarot-card__back-reversed">
               {t("chat.panel.reversed")}
             </div>
           )}
           <div className="tarot-card__back-divider" />
-          <div className="tarot-card__back-meaning">{card.meaning}</div>
+          <div className="tarot-card__back-meaning">
+            {card.meaning?.split("\\n").map((line, i) => (
+              <span key={i}>{line}<br /></span>
+            ))}
+          </div>
         </div>
       </div>
     </div>

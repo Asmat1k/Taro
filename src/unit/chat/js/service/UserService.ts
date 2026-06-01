@@ -50,6 +50,7 @@ export class UserServiceImpl implements UserService {
       runInAction(() => {
         this.userStore.isLoadingUser = false
         this.userStore.isAuthenticated = true
+        this.userStore.user = { name, description }
       })
       this.log.info("Save user | done")
     } catch (error) {
