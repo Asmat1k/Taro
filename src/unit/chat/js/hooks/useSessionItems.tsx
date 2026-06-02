@@ -7,10 +7,8 @@ export const useSessionItems = (collapsed: boolean): ConversationsProps["items"]
   const { t } = useTranslation()
 
   return chatsStore.sessions.map((session) => {
-    const shortId = session.sessionId.slice(0, 8)
 
-    const displayTitle =
-      session.title ?? t("chat.sessionFallback", { shortId })
+    const displayTitle = session.title ?? t("chat.sessionFallback")
 
     return {
       key: session.sessionId,

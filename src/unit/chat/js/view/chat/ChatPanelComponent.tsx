@@ -1,5 +1,5 @@
 import "./ChatPanelComponent.scss"
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react"
+import { useCallback, useEffect, useRef, type KeyboardEvent } from "react"
 import { observer } from "mobx-react-lite"
 import { useTranslation } from "react-i18next"
 import { Button, Input, Select, Skeleton } from "antd"
@@ -30,8 +30,9 @@ const THEME_ICON: Record<string, string> = {
 export const ChatPanelComponent = observer(function ChatPanelComponent() {
   const { t } = useTranslation()
   const sessionService = useIoCBinding<SessionService>(SessionService$type)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
-  const [ inputValue, setInputValue ] = useState("")
+  const inputValueRef = useRef("")
 
   const selectedSessionId = chatsStore.selectedSessionId
   const isNewChat = selectedSessionId === undefined
@@ -50,12 +51,14 @@ export const ChatPanelComponent = observer(function ChatPanelComponent() {
   }, [ chatItems.length ])
 
   const onSend = useCallback(() => {
-    const message = inputValue.trim()
+    const message = inputValueRef.current.trim()
     if (!message || isStreaming) return
-
-    setInputValue("")
+    if (inputRef.current) {
+      inputRef.current.value = ""
+      inputValueRef.current = ""
+    }
     void sessionService.sendMessage(message)
-  }, [ inputValue, isStreaming, sessionService ])
+  }, [ isStreaming, sessionService ])
 
   const onKeyDown = useCallback(
     (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -170,11 +173,11 @@ export const ChatPanelComponent = observer(function ChatPanelComponent() {
 
         <div className="chat-panel__input-row">
           <Input.TextArea
+            ref={inputRef}
             className="chat-panel__textarea"
             placeholder={placeholder}
             disabled={isInputDisabled}
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={(e) => { inputValueRef.current = e.target.value }}
             onKeyDown={onKeyDown}
             autoSize={{ minRows: 1, maxRows: 5 }}
             allowClear

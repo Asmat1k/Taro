@@ -10,7 +10,7 @@
     "collapse": "Свернуть",
     "newChat": "Новый чат",
     "noSessions": "Сессий пока нет",
-    "sessionFallback": "Сессия {{shortId}}",
+    "sessionFallback": "Новый сеанс гадания",
     "settings": "Настройки",
     "settingsModal": {
       "title": "Настройки профиля",
