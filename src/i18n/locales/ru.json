@@ -10,7 +10,7 @@
     "collapse": "Свернуть",
     "newChat": "Новый чат",
     "noSessions": "Сессий пока нет",
-    "sessionFallback": "Сессия {{shortId}}",
+    "sessionFallback": "Новый сеанс гадания",
     "settings": "Настройки",
     "settingsModal": {
       "title": "Настройки профиля",
@@ -40,6 +40,7 @@
       "sendPlaceholder": "Введите ваш вопрос...",
       "clarificationPlaceholder": "Задайте уточняющий вопрос...",
       "loadingPlaceholder": "Таролог думает...",
+      "sessionCompletePlaceholder": "Сеанс завершён",
       "toneLabel": "Тон:",
       "tones": {
         "positive": "Позитивный",

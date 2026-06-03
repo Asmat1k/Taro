@@ -120,10 +120,7 @@
     font-size: 12px;
     color: var(--color-text-secondary);
     line-height: 1.45;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 7;
-    -webkit-box-orient: vertical;
+    overflow-y: auto;
     flex: 1;
   }
 }

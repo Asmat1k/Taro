@@ -14,31 +14,51 @@
     border: none !important;
     outline: none !important;
     background: transparent !important;
-    /* Нейтральная рамка — всегда видна */
     box-shadow: 0 0 0 1.5px var(--color-border-default);
     transition: box-shadow 0.2s;
+    opacity: 0.5;
 
     &::before {
       display: none;
     }
 
-    /* Неактивная — градиент приглушён */
-    .settings-theme-option {
-      opacity: 0.38;
+    /* Внутренний span с текстом — центрируем */
+    > span:last-child {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 !important;
+      width: 100%;
+      text-align: center;
     }
 
-    /* Активная — полная яркость + яркий цветной обвод */
-    &.ant-radio-button-wrapper-checked {
-      .settings-theme-option {
-        opacity: 1;
+    /* hover на неактивной — не менять фон */
+    &:not(.ant-radio-button-wrapper-checked):hover,
+    &:not(.ant-radio-button-wrapper-checked):focus,
+    &:not(.ant-radio-button-wrapper-checked):active {
+      background: transparent !important;
+      border: none !important;
+      outline: none !important;
+      box-shadow: 0 0 0 1.5px var(--color-border-default) !important;
+    }
+
+    /* Активная — все состояния */
+    &.ant-radio-button-wrapper-checked,
+    &.ant-radio-button-wrapper-checked:hover,
+    &.ant-radio-button-wrapper-checked:focus,
+    &.ant-radio-button-wrapper-checked:focus-within,
+    &.ant-radio-button-wrapper-checked:active {
+      background: transparent !important;
+      border: none !important;
+      outline: none !important;
+      opacity: 1;
+
+      &.settings-theme-btn--pink {
+        box-shadow: 0 0 0 3px #d4007a !important;
       }
 
-      &:has(.settings-theme-option--pink) {
-        box-shadow: 0 0 0 3px #d4007a;
-      }
-
-      &:has(.settings-theme-option--gold) {
-        box-shadow: 0 0 0 3px #c49010;
+      &.settings-theme-btn--gold {
+        box-shadow: 0 0 0 3px #c49010 !important;
       }
     }
   }
@@ -50,7 +70,6 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 14px 12px;
   width: 100%;
   cursor: pointer;
   border-radius: 10px;
@@ -64,11 +83,6 @@
   &--gold {
     background: linear-gradient(135deg, #2a2310 0%, #4a3b0a 100%);
     color: #d4a800;
-  }
-
-  &__icon {
-    font-size: 24px;
-    line-height: 1;
   }
 
   &__name {
